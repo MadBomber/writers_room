@@ -9,7 +9,7 @@ module WritersRoom
 
     DEFAULT_CONFIG = {
       "provider" => "ollama",
-      "model_name" => "gpt-oss",
+      "model_name" => "gpt-oss:20b",
     }.freeze
 
     def initialize(path = nil)
