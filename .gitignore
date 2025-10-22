@@ -1,0 +1,28 @@
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/test/reports/
+/tmp/
+
+# Test artifacts
+.test_status
+
+# Gem files
+*.gem
+
+# Bundler
+Gemfile.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
