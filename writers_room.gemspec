@@ -34,10 +34,9 @@ Gem::Specification.new do |spec|
   # Runtime dependencies
   spec.add_dependency "zeitwerk", "~> 2.6"
   spec.add_dependency "thor", "~> 1.3"
-  spec.add_dependency "ruby_llm", ">= 1.8"
   spec.add_dependency "debug_me", ">= 1.0"
-  spec.add_dependency "redis", ">= 5.0"
-  spec.add_dependency "smart_message", ">= 0.0.17"
+  spec.add_dependency "robot_lab", ">= 0.0.7"
+  spec.add_dependency "myway_config", "~> 0.1"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

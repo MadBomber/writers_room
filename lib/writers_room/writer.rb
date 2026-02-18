@@ -5,24 +5,23 @@ include DebugMe
 
 require "yaml"
 require "fileutils"
-require "ruby_llm"
 
 module WritersRoom
   # Writer helps develop the story: expands concepts, develops characters,
   # creates story arcs, and breaks down scenes
   class Writer
-    attr_reader :project_path, :metadata, :config, :llm
+    attr_reader :project_path, :metadata, :robot
 
     def initialize(project_path = Dir.pwd)
       @project_path = File.expand_path(project_path)
 
-      unless File.exist?(File.join(@project_path, "config.yml"))
-        raise Error, "No config.yml found. Run 'wr init <project_name>' first."
+      unless File.exist?(File.join(@project_path, "config.yml")) ||
+             File.exist?(File.join(@project_path, "project.yml"))
+        raise Error, "No project found. Run 'wr init <project_name>' first."
       end
 
-      @config = Config.new(File.join(@project_path, "config.yml"))
       @metadata = ProjectMetadata.new(@project_path)
-      setup_llm
+      setup_robot
 
       debug_me("Writer initialized for project") { @metadata.name }
     end
@@ -35,13 +34,12 @@ module WritersRoom
         raise Error, "No concept found. Initialize project with a concept first."
       end
 
-      # If chat mode, start interactive session first
       if chat
         chat_result = chat_about_concept(current_concept)
         return chat_result if chat_result
       end
 
-      system_prompt = <<~SYSTEM
+      @robot.update(system_prompt: <<~SYSTEM)
         You are an experienced story developer helping to expand a project concept.
         Your job is to take a brief concept and develop it into a richer, more detailed description
         that provides direction for writers, characters, and scenes.
@@ -56,7 +54,7 @@ module WritersRoom
         Keep it concise but evocative (3-5 paragraphs).
       SYSTEM
 
-      user_prompt = <<~USER
+      result = @robot.run(<<~USER)
         Here is the current concept:
 
         #{current_concept}
@@ -65,17 +63,8 @@ module WritersRoom
         the creative team.
       USER
 
-      response = @llm.chat(
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_prompt }
-        ],
-        temperature: 0.8
-      )
+      developed_concept = result.reply
 
-      developed_concept = extract_response(response)
-
-      # Save to a development notes file
       notes_path = File.join(@project_path, "concept_development.md")
       File.write(notes_path, <<~MARKDOWN)
         # Project Concept Development
@@ -103,13 +92,12 @@ module WritersRoom
       personality = basic_info[:personality] || basic_info["personality"] || "to be determined"
       background = basic_info[:background] || basic_info["background"] || ""
 
-      # If chat mode, start interactive session first
       if chat
         chat_result = chat_about_character(name, personality, background)
         return chat_result if chat_result
       end
 
-      system_prompt = <<~SYSTEM
+      @robot.update(system_prompt: <<~SYSTEM)
         You are a character development expert helping to create rich, three-dimensional characters.
         Given a character name and basic information, develop a detailed character profile.
 
@@ -125,7 +113,7 @@ module WritersRoom
         Format the response as a structured character profile.
       SYSTEM
 
-      user_prompt = <<~USER
+      result = @robot.run(<<~USER)
         Project Concept:
         #{@metadata.concept}
 
@@ -137,17 +125,8 @@ module WritersRoom
         Please create a detailed character profile for #{name}.
       USER
 
-      response = @llm.chat(
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_prompt }
-        ],
-        temperature: 0.7
-      )
+      character_profile = result.reply
 
-      character_profile = extract_response(response)
-
-      # Save to character development file
       dev_path = File.join(@project_path, "characters", "#{sanitize_filename(name)}_development.md")
       FileUtils.mkdir_p(File.dirname(dev_path))
 
@@ -172,13 +151,12 @@ module WritersRoom
 
     # Create a story arc
     def create_arc(arc_name, description, chat: false)
-      # If chat mode, start interactive session first
       if chat
         chat_result = chat_about_arc(arc_name, description)
         return chat_result if chat_result
       end
 
-      system_prompt = <<~SYSTEM
+      @robot.update(system_prompt: <<~SYSTEM)
         You are a story structure expert helping to develop narrative arcs.
         Given an arc name and description, create a detailed arc outline.
 
@@ -193,7 +171,7 @@ module WritersRoom
         Keep it structured and clear for writers to use.
       SYSTEM
 
-      user_prompt = <<~USER
+      result = @robot.run(<<~USER)
         Project Concept:
         #{@metadata.concept}
 
@@ -204,17 +182,8 @@ module WritersRoom
         Please create a detailed arc outline for "#{arc_name}".
       USER
 
-      response = @llm.chat(
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_prompt }
-        ],
-        temperature: 0.7
-      )
+      arc_outline = result.reply
 
-      arc_outline = extract_response(response)
-
-      # Save arc to metadata and create arc file
       arc_data = {
         "name" => arc_name,
         "description" => description,
@@ -224,7 +193,6 @@ module WritersRoom
 
       @metadata.add_story_arc(arc_data)
 
-      # Save detailed arc file
       arc_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}.md")
       FileUtils.mkdir_p(File.dirname(arc_path))
 
@@ -252,20 +220,18 @@ module WritersRoom
 
     # Break down an arc into scene suggestions
     def breakdown_scenes(arc_name, num_scenes: 5, chat: false)
-      # Find the arc
       arc = @metadata.story_arcs.find { |a| a["name"] == arc_name }
 
       unless arc
         raise Error, "Arc '#{arc_name}' not found. Create it first with 'wr write create-arc'."
       end
 
-      # If chat mode, start interactive session first
       if chat
         chat_result = chat_about_scene_breakdown(arc_name, arc, num_scenes)
         return chat_result if chat_result
       end
 
-      system_prompt = <<~SYSTEM
+      @robot.update(system_prompt: <<~SYSTEM)
         You are a scene breakdown expert helping to structure narrative arcs into scenes.
         Given an arc outline, break it down into specific scenes.
 
@@ -280,7 +246,7 @@ module WritersRoom
         Format as a numbered list of scenes.
       SYSTEM
 
-      user_prompt = <<~USER
+      result = @robot.run(<<~USER)
         Project Concept:
         #{@metadata.concept}
 
@@ -294,17 +260,8 @@ module WritersRoom
         Please break this arc down into #{num_scenes} scenes.
       USER
 
-      response = @llm.chat(
-        messages: [
-          { role: "system", content: system_prompt },
-          { role: "user", content: user_prompt }
-        ],
-        temperature: 0.6
-      )
+      scene_breakdown = result.reply
 
-      scene_breakdown = extract_response(response)
-
-      # Save breakdown file
       breakdown_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_breakdown.md")
 
       File.write(breakdown_path, <<~MARKDOWN)
@@ -328,7 +285,6 @@ module WritersRoom
 
     private
 
-    # Chat about concept development
     def chat_about_concept(current_concept)
       require_relative "chat_session"
 
@@ -339,10 +295,9 @@ module WritersRoom
         subject: "Project Concept"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "concept_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -353,7 +308,6 @@ module WritersRoom
       }
     end
 
-    # Chat about character development
     def chat_about_character(name, personality, background)
       require_relative "chat_session"
 
@@ -365,10 +319,9 @@ module WritersRoom
         additional: "Personality: #{personality}\nBackground: #{background}"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "characters", "#{sanitize_filename(name)}_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -380,7 +333,6 @@ module WritersRoom
       }
     end
 
-    # Chat about story arc creation
     def chat_about_arc(arc_name, description)
       require_relative "chat_session"
 
@@ -392,10 +344,9 @@ module WritersRoom
         additional: "Description: #{description}"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -407,7 +358,6 @@ module WritersRoom
       }
     end
 
-    # Chat about scene breakdown
     def chat_about_scene_breakdown(arc_name, arc, num_scenes)
       require_relative "chat_session"
 
@@ -419,10 +369,9 @@ module WritersRoom
         additional: "Arc Description: #{arc['description']}\nRequested scenes: #{num_scenes}"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_breakdown_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -434,44 +383,34 @@ module WritersRoom
       }
     end
 
-    def setup_llm
-      # Configure RubyLLM with provider-specific settings
-      provider = @config.provider || "ollama"
-      model = @config.model_name || "gpt-oss:20b"
+    def setup_robot
+      config = WritersRoom.config
+      provider = config.provider
+      model = config.model_name
 
-      RubyLLM.configure do |config|
-        if provider == "ollama"
-          config.ollama_api_base = ENV["OLLAMA_URL"] || "http://localhost:11434"
-        elsif provider == "openai"
-          config.openai_api_key = ENV["OPENAI_API_KEY"]
-        elsif provider == "anthropic"
-          config.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
-        end
-      end
+      configure_ruby_llm(provider)
 
-      # Create chat client for the specified model
-      # RubyLLM uses just the model name, not "provider/model"
-      @llm = RubyLLM.chat(model: model)
+      @robot = RobotLab.build(
+        name: "writer",
+        model: model,
+        system_prompt: "You are a creative writing assistant."
+      )
 
-      debug_me("LLM setup complete for Writer") do
+      debug_me("Robot setup complete for Writer") do
         [provider, model]
       end
     end
 
-    def extract_response(response)
-      text = if response.is_a?(String)
-          response
-        elsif response.respond_to?(:content)
-          response.content
-        elsif response.respond_to?(:text)
-          response.text
-        elsif response.is_a?(Hash) && response[:content]
-          response[:content]
-        else
-          response.to_s
+    def configure_ruby_llm(provider)
+      RubyLLM.configure do |c|
+        if provider == "ollama"
+          c.ollama_api_base = WritersRoom.config.ollama_url
+        elsif provider == "openai"
+          c.openai_api_key = ENV["OPENAI_API_KEY"]
+        elsif provider == "anthropic"
+          c.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
         end
-
-      text.strip
+      end
     end
 
     def sanitize_filename(name)

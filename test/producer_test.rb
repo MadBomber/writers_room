@@ -9,8 +9,8 @@ class ProducerTest < Minitest::Test
     @temp_dir = Dir.mktmpdir("producer_test")
     @project_path = File.join(@temp_dir, "test_project")
 
-    # Create a basic project structure
-    WritersRoom::Config.create_project(@project_path)
+    # Create a basic project structure via Producer
+    WritersRoom::Producer.create_project(@project_path, name: "test_project")
     @producer = WritersRoom::Producer.new(@project_path)
   end
 
@@ -21,7 +21,6 @@ class ProducerTest < Minitest::Test
   def test_initializes_with_valid_project
     assert_instance_of WritersRoom::Producer, @producer
     assert_equal @project_path, @producer.project_path
-    assert_instance_of WritersRoom::Config, @producer.config
   end
 
   def test_raises_error_without_config
@@ -32,11 +31,11 @@ class ProducerTest < Minitest::Test
       WritersRoom::Producer.new(empty_dir)
     end
 
-    assert_match(/No config.yml found/, error.message)
+    assert_match(/No project found/, error.message)
   end
 
   def test_ensures_project_structure
-    required_dirs = %w[characters scenes transcripts logs]
+    required_dirs = %w[characters scenes transcripts arcs]
 
     required_dirs.each do |dir|
       assert Dir.exist?(File.join(@project_path, dir)),

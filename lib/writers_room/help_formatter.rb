@@ -139,20 +139,11 @@ module WritersRoom
       # Director Commands
       print_section_header("Director Commands")
 
-      print_command("direct", "Direct a scene with multiple actors")
+      print_command("direct", "Direct a scene with in-process actors")
       print_option("SCENE_FILE", "Scene YAML file (required)", indent: 4)
       print_option("-c, --characters DIR", "Character directory (auto-detected)", indent: 4)
       print_option("-o, --output FILE", "Transcript output file", indent: 4)
       print_option("-l, --max-lines N", "Maximum lines before ending (default: 50)", indent: 4)
-      puts ""
-
-      # Actor Commands
-      print_section_header("Actor Commands (Advanced)")
-
-      print_command("actor", "Run a single actor process")
-      print_option("CHARACTER_FILE", "Character YAML file (required)", indent: 4)
-      print_option("SCENE_FILE", "Scene YAML file (required)", indent: 4)
-      print_option("-r, --channel CHANNEL", "Redis channel (default: writers_room:dialog)", indent: 4)
       puts ""
 
       # Utility Commands
@@ -237,9 +228,8 @@ module WritersRoom
       puts color(:section, "CONFIGURATION:")
       puts "  Default LLM: Ollama with gpt-oss model"
       puts "  Override with environment variables:"
-      puts "    RUBY_LLM_PROVIDER=openai"
-      puts "    RUBY_LLM_MODEL=gpt-4"
-      puts "    OLLAMA_URL=http://localhost:11434"
+      puts "    WRITERS_ROOM_PROVIDER=openai"
+      puts "    WRITERS_ROOM_MODEL_NAME=gpt-4"
       puts ""
 
       puts color(:header, "=" * 80)

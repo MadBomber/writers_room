@@ -7,17 +7,16 @@ module WritersRoom
   # Producer manages the overall production: creates characters, scenes,
   # and coordinates directors to run the full production
   class Producer
-    attr_reader :project_path, :config, :metadata
+    attr_reader :project_path, :metadata
 
     def initialize(project_path = Dir.pwd)
       @project_path = File.expand_path(project_path)
-      @config_path = File.join(@project_path, "config.yml")
 
-      unless File.exist?(@config_path)
-        raise Error, "No config.yml found. Run 'wr init <project_name>' first."
+      unless File.exist?(File.join(@project_path, "config.yml")) ||
+             File.exist?(File.join(@project_path, "project.yml"))
+        raise Error, "No project found. Run 'wr init <project_name>' first."
       end
 
-      @config = Config.new(@config_path)
       @metadata = ProjectMetadata.new(@project_path)
       ensure_project_structure
     end
@@ -26,8 +25,15 @@ module WritersRoom
     def self.create_project(project_path, name:, concept: "", **config_options)
       FileUtils.mkdir_p(project_path)
 
-      # Create config
-      Config.create_project(project_path, config_options)
+      # Write config.yml if it doesn't already exist
+      config_path = File.join(project_path, "config.yml")
+      unless File.exist?(config_path)
+        config_data = {
+          "provider" => config_options[:provider] || "ollama",
+          "model_name" => config_options[:model_name] || "gpt-oss:20b"
+        }
+        File.write(config_path, YAML.dump(config_data))
+      end
 
       # Create metadata with concept
       ProjectMetadata.create(project_path, name: name, concept: concept)
@@ -40,7 +46,7 @@ module WritersRoom
 
     # Validate that the project has the required structure
     def validate_project
-      required_dirs = %w[characters scenes transcripts logs arcs]
+      required_dirs = %w[characters scenes transcripts arcs]
       missing = required_dirs.reject { |dir| Dir.exist?(File.join(@project_path, dir)) }
 
       if missing.any?
@@ -139,10 +145,9 @@ module WritersRoom
         additional: "Available scenes: #{scenes_list}\nTotal scenes: #{scene_files.count}"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "production_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -172,11 +177,9 @@ module WritersRoom
 
         director = Director.new(
           scene_file: scene_file,
-          character_dir: File.join(@project_path, "characters")
+          character_dir: File.join(@project_path, "characters"),
+          max_lines: options[:max_lines]
         )
-
-        # Set max lines if specified
-        ENV["MAX_LINES"] = options[:max_lines].to_s if options[:max_lines]
 
         begin
           director.action!
@@ -239,7 +242,7 @@ module WritersRoom
     private
 
     def ensure_project_structure
-      required_dirs = %w[characters scenes transcripts logs arcs]
+      required_dirs = %w[characters scenes transcripts arcs]
       required_dirs.each do |dir|
         dir_path = File.join(@project_path, dir)
         FileUtils.mkdir_p(dir_path) unless Dir.exist?(dir_path)

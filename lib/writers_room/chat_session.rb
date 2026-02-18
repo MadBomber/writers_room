@@ -3,19 +3,17 @@
 require "debug_me"
 include DebugMe
 
-require "ruby_llm"
 require "io/console"
 
 module WritersRoom
   # Interactive chat session with LLM for creative consultation
   class ChatSession
-    attr_reader :llm, :context, :messages, :config
+    attr_reader :robot, :context, :messages
 
-    def initialize(config:, context: {})
-      @config = config
+    def initialize(context: {})
       @context = context
       @messages = []
-      setup_llm
+      setup_robot
 
       debug_me("ChatSession initialized") { context.keys }
     end
@@ -26,7 +24,7 @@ module WritersRoom
       display_context
 
       loop do
-        print "\n#{prompt_symbol} "
+        print "\n> "
         user_input = STDIN.gets&.chomp
 
         break if exit_command?(user_input)
@@ -43,15 +41,12 @@ module WritersRoom
     def chat(user_message)
       @messages << { role: "user", content: user_message }
 
-      response = @llm.chat(
-        messages: system_messages + @messages,
-        temperature: 0.7
-      )
+      result = @robot.run(user_message)
+      assistant_message = result.reply || ""
 
-      assistant_message = extract_response(response)
       @messages << { role: "assistant", content: assistant_message }
 
-      puts "\n#{assistant_symbol} #{assistant_message}"
+      puts "\nAssistant: #{assistant_message}"
 
       assistant_message
     end
@@ -60,18 +55,12 @@ module WritersRoom
     def summary
       return "No conversation yet." if @messages.empty?
 
-      # Ask LLM to summarize the conversation
-      summary_prompt = {
-        role: "user",
-        content: "Please provide a concise summary of our conversation and any key decisions or ideas that emerged."
-      }
-
-      response = @llm.chat(
-        messages: system_messages + @messages + [summary_prompt],
-        temperature: 0.5
+      @robot.update(system_prompt: build_system_prompt)
+      result = @robot.run(
+        "Please provide a concise summary of our conversation and any key decisions or ideas that emerged."
       )
 
-      extract_response(response)
+      result.reply || "Unable to generate summary."
     end
 
     # Save conversation to file
@@ -103,33 +92,34 @@ module WritersRoom
 
     private
 
-    def setup_llm
-      # Configure RubyLLM with provider-specific settings
-      provider = @config.provider || "ollama"
-      model = @config.model_name || "gpt-oss:20b"
+    def setup_robot
+      config = WritersRoom.config
+      provider = config.provider
+      model = config.model_name
 
-      RubyLLM.configure do |config|
-        if provider == "ollama"
-          config.ollama_api_base = ENV["OLLAMA_URL"] || "http://localhost:11434"
-        elsif provider == "openai"
-          config.openai_api_key = ENV["OPENAI_API_KEY"]
-        elsif provider == "anthropic"
-          config.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
-        end
-      end
+      configure_ruby_llm(provider)
 
-      # Create chat client for the specified model
-      # RubyLLM uses just the model name, not "provider/model"
-      @llm = RubyLLM.chat(model: model)
+      @robot = RobotLab.build(
+        name: "chat_session",
+        model: model,
+        system_prompt: build_system_prompt
+      )
 
-      debug_me("LLM setup complete for ChatSession") do
+      debug_me("Robot setup complete for ChatSession") do
         [provider, model]
       end
     end
 
-    def system_messages
-      system_content = build_system_prompt
-      [{ role: "system", content: system_content }]
+    def configure_ruby_llm(provider)
+      RubyLLM.configure do |c|
+        if provider == "ollama"
+          c.ollama_api_base = WritersRoom.config.ollama_url
+        elsif provider == "openai"
+          c.openai_api_key = ENV["OPENAI_API_KEY"]
+        elsif provider == "anthropic"
+          c.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
+        end
+      end
     end
 
     def build_system_prompt
@@ -165,12 +155,16 @@ module WritersRoom
     end
 
     def display_welcome
-      puts "\n" + "=" * 60
-      puts "  WRITERSROOM CHAT SESSION"
-      puts "=" * 60
-      puts "\nStarting interactive chat with LLM..."
-      puts "Type your questions or ideas. Type 'exit' or 'quit' to end."
-      puts "Type 'help' for available commands."
+      puts <<~WELCOME
+
+        #{"=" * 60}
+          WRITERSROOM CHAT SESSION
+        #{"=" * 60}
+
+        Starting interactive chat with LLM...
+        Type your questions or ideas. Type 'exit' or 'quit' to end.
+        Type 'help' for available commands.
+      WELCOME
     end
 
     def display_context
@@ -185,18 +179,14 @@ module WritersRoom
     end
 
     def display_goodbye
-      puts "\n" + "=" * 60
-      puts "  Chat session ended"
-      puts "=" * 60
-      puts "\nTotal exchanges: #{@messages.count / 2}"
-    end
+      puts <<~GOODBYE
 
-    def prompt_symbol
-      "💬"
-    end
+        #{"=" * 60}
+          Chat session ended
+        #{"=" * 60}
 
-    def assistant_symbol
-      "🤖"
+        Total exchanges: #{@messages.count / 2}
+      GOODBYE
     end
 
     def exit_command?(input)
@@ -213,11 +203,11 @@ module WritersRoom
         display_context
         true
       when "summary"
-        puts "\n📝 Summary:\n#{summary}"
+        puts "\nSummary:\n#{summary}"
         true
       when "clear"
         @messages.clear
-        puts "\n✓ Conversation cleared"
+        puts "\nConversation cleared"
         true
       else
         false
@@ -225,29 +215,17 @@ module WritersRoom
     end
 
     def show_help
-      puts "\nAvailable commands:"
-      puts "  help     - Show this help"
-      puts "  context  - Show current context"
-      puts "  summary  - Get conversation summary"
-      puts "  clear    - Clear conversation history"
-      puts "  exit     - End chat session (also: quit, q, bye)"
-      puts "\nOtherwise, just type your message to chat with the LLM."
-    end
+      puts <<~HELP
 
-    def extract_response(response)
-      text = if response.is_a?(String)
-          response
-        elsif response.respond_to?(:content)
-          response.content
-        elsif response.respond_to?(:text)
-          response.text
-        elsif response.is_a?(Hash) && response[:content]
-          response[:content]
-        else
-          response.to_s
-        end
+        Available commands:
+          help     - Show this help
+          context  - Show current context
+          summary  - Get conversation summary
+          clear    - Clear conversation history
+          exit     - End chat session (also: quit, q, bye)
 
-      text.strip
+        Otherwise, just type your message to chat with the LLM.
+      HELP
     end
   end
 end

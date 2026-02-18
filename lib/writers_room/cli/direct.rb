@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "fileutils"
 
 module WritersRoom
   module Commands
@@ -32,13 +31,11 @@ module WritersRoom
         # Set max lines environment variable
         ENV["MAX_LINES"] = options[:max_lines].to_s
 
-        # Create logs directory if it doesn't exist
-        FileUtils.mkdir_p("logs")
-
         # Create and run director
         director = WritersRoom::Director.new(
           scene_file: scene_file,
-          character_dir: options[:characters]
+          character_dir: options[:characters],
+          max_lines: options[:max_lines]
         )
 
         # Handle graceful shutdown

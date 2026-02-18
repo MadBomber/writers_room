@@ -10,31 +10,25 @@ require "debug_me"
 include DebugMe
 
 require "yaml"
-require "redis"
-require "smart_message"
-
-# Load message classes
-require_relative "messages/dialog_message"
-require_relative "messages/scene_control_message"
-require_relative "messages/stage_direction_message"
-require_relative "messages/meta_message"
 
 module WritersRoom
   class Director
-    attr_reader :scene_info, :actor_processes, :transcript
+    attr_reader :scene_info, :actors, :transcript
 
     # Initialize the Director
     #
     # @param scene_file [String] Path to scene YAML file
     # @param character_dir [String] Directory containing character YAML files (optional, auto-detected)
-    def initialize(scene_file:, character_dir: nil)
+    # @param max_lines [Integer] Maximum dialog lines before scene ends
+    def initialize(scene_file:, character_dir: nil, max_lines: nil)
       @scene_file = scene_file
       @character_dir = character_dir || detect_character_dir(scene_file)
       @scene_info = load_scene
-      @actor_processes = []
+      @actors = []
       @transcript = []
       @running = false
-      @redis = Redis.new
+      @max_lines = max_lines || ENV["MAX_LINES"]&.to_i || 50
+      @bus = TypedBus::MessageBus.new
 
       debug_me("Director initialized") {
         [@scene_info[:scene_name], @scene_info[:characters].join(", "), @character_dir]
@@ -43,31 +37,30 @@ module WritersRoom
 
     # Start the scene with all actors
     def action!
-      puts "\n" + "=" * 60
-      puts "SCENE #{@scene_info[:scene_number]}: #{@scene_info[:scene_name]}"
-      puts "Location: #{@scene_info[:location]}"
-      puts "Characters: #{@scene_info[:characters].join(", ")}"
-      puts "=" * 60 + "\n"
+      puts <<~HEADER
+
+        #{"=" * 60}
+        SCENE #{@scene_info[:scene_number]}: #{@scene_info[:scene_name]}
+        Location: #{@scene_info[:location]}
+        Characters: #{@scene_info[:characters].join(", ")}
+        #{"=" * 60}
+
+      HEADER
 
       @running = true
 
-      # Start all actor processes
-      start_actors
+      create_actors
+      subscribe_to_scene
+      initiate_scene
 
-      # Send start scene control message
-      send_control_message("start")
-
-      # Listen to dialog and manage the scene
       monitor_scene
 
-      # Cleanup
       stop_actors
     end
 
     # Stop the scene and all actors
     def cut!
       @running = false
-      send_control_message("stop")
       puts "\n[DIRECTOR: CUT! Scene ended.]"
     end
 
@@ -117,14 +110,10 @@ module WritersRoom
 
     private
 
-    # Auto-detect character directory from scene file path
-    # If scene is in projects/PROJECT_NAME/scenes/, look for projects/PROJECT_NAME/characters/
-    # Otherwise fall back to 'characters' in current directory
     def detect_character_dir(scene_file)
       scene_path = File.expand_path(scene_file)
       scene_dir = File.dirname(scene_path)
 
-      # Check if scene is in a project structure (projects/PROJECT_NAME/scenes/)
       if scene_dir =~ %r{projects/([^/]+)/scenes}
         project_name = $1
         character_dir = File.join("projects", project_name, "characters")
@@ -135,14 +124,12 @@ module WritersRoom
         end
       end
 
-      # Fall back to looking for 'characters' relative to scene directory
       character_dir = File.join(scene_dir, "..", "characters")
       if Dir.exist?(character_dir)
         debug_me("Found character directory relative to scene") { character_dir }
         return File.expand_path(character_dir)
       end
 
-      # Final fallback
       debug_me("Using default character directory") { "characters" }
       "characters"
     end
@@ -153,13 +140,13 @@ module WritersRoom
       end
 
       scene = YAML.load_file(@scene_file)
-
-      # Convert string keys to symbols
       scene.transform_keys(&:to_sym)
     end
 
-    def start_actors
+    def create_actors
       puts "\n[DIRECTOR: Calling actors to the stage...]\n"
+
+      @bus.add_channel(:scene)
 
       @scene_info[:characters].each do |character_name|
         character_file = File.join(@character_dir, "#{character_name.downcase}.yml")
@@ -171,91 +158,89 @@ module WritersRoom
 
         puts "  - #{character_name} is taking their position..."
 
-        # Spawn actor process
-        pid = spawn(
-          "ruby", "actor.rb",
-          "-c", character_file,
-          "-s", @scene_file,
-          out: "logs/#{character_name.downcase}_#{Time.now.to_i}.log",
-          err: "logs/#{character_name.downcase}_#{Time.now.to_i}_err.log",
+        character_data = YAML.load_file(character_file)
+        character_info = character_data.transform_keys(&:to_sym)
+
+        actor = Actor.new(
+          character_info: character_info,
+          scene_info: @scene_info,
+          bus: @bus
         )
 
-        @actor_processes << { name: character_name, pid: pid }
-
-        # Give actors time to initialize
-        sleep 0.5
+        @actors << actor
       end
 
       puts "\n[DIRECTOR: All actors ready!]\n"
-      sleep 1  # Give them time to subscribe to channels
     end
 
     def stop_actors
       puts "\n[DIRECTOR: Dismissing actors...]\n"
 
-      @actor_processes.each do |actor|
-        begin
-          Process.kill("INT", actor[:pid])
-          Process.wait(actor[:pid])
-          puts "  - #{actor[:name]} has left the stage"
-        rescue Errno::ESRCH
-          # Process already ended
-        end
+      @actors.each do |actor|
+        actor.disconnect
+        puts "  - #{actor.character_name} has left the stage"
       end
 
-      @actor_processes.clear
+      @bus.close_all
+      @actors.clear
     end
 
-    def send_control_message(command)
-      message = case command
-        when "start"
-          SceneControlMessage.start_scene(@scene_info[:scene_number])
-        when "stop"
-          SceneControlMessage.stop_scene(@scene_info[:scene_number])
-        when "end"
-          SceneControlMessage.end_scene(@scene_info[:scene_number])
-        else
-          return
+    def subscribe_to_scene
+      @bus.subscribe(:scene) do |delivery|
+        message = delivery.message
+        msg_content = message.respond_to?(:content) ? message.content : message
+
+        msg_content = msg_content.transform_keys(&:to_sym) if msg_content.is_a?(Hash)
+
+        if msg_content.is_a?(Hash) && msg_content[:from]
+          @transcript << {
+            type: :dialog,
+            character: msg_content[:from],
+            line: msg_content[:content],
+            timestamp: Time.now.to_i,
+            emotion: msg_content[:emotion],
+          }
+
+          emotion_tag = msg_content[:emotion] ? " [#{msg_content[:emotion]}]" : ""
+          puts "#{msg_content[:from]}#{emotion_tag}: #{msg_content[:content]}"
         end
 
-      message.publish
-      debug_me("Sent control message: #{command}")
+        delivery.ack!
+      end
+    end
+
+    def initiate_scene
+      return if @actors.empty?
+
+      first_actor = @actors.first
+      debug_me("Initiating scene with #{first_actor.character_name}")
+
+      dialog = first_actor.generate_dialog
+      first_actor.speak(dialog)
     end
 
     def monitor_scene
       puts "\n[SCENE BEGINS]\n\n"
 
-      line_count = 0
-      max_lines = ENV["MAX_LINES"]&.to_i || 50  # Default to 50 lines
+      timeout = WritersRoom.config.scene.timeout rescue 300
+      start_time = Time.now
 
-      # Subscribe to dialog messages
-      DialogMessage.subscribe("writers_room:dialog") do |message|
-        break unless @running
-        break if line_count >= max_lines
+      while @running
+        line_count = @transcript.count { |e| e[:type] == :dialog }
 
-        # Only show messages for this scene
-        next unless message.scene == @scene_info[:scene_number]
-
-        # Record in transcript
-        @transcript << {
-          type: :dialog,
-          character: message.from,
-          line: message.content,
-          timestamp: message.timestamp,
-          emotion: message.emotion,
-        }
-
-        # Display dialog
-        emotion_tag = message.emotion ? " [#{message.emotion}]" : ""
-        puts "#{message.from}#{emotion_tag}: #{message.content}"
-
-        line_count += 1
-
-        # Check if we should end the scene
-        if line_count >= max_lines
+        if line_count >= @max_lines
           puts "\n[DIRECTOR: Maximum lines reached]"
           cut!
+          break
         end
+
+        if (Time.now - start_time) > timeout
+          puts "\n[DIRECTOR: Scene timeout reached]"
+          cut!
+          break
+        end
+
+        sleep 0.5
       end
     end
   end

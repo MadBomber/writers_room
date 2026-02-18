@@ -1,0 +1,19 @@
+defaults:
+  provider: ollama
+  model_name: "gpt-oss:20b"
+  scene:
+    max_lines: 50
+    timeout: 300
+  ollama_url: "http://localhost:11434"
+
+development:
+  provider: ollama
+  model_name: "gpt-oss:20b"
+
+test:
+  provider: ollama
+  model_name: "gpt-oss:20b"
+
+production:
+  provider: anthropic
+  model_name: "claude-sonnet-4-20250514"

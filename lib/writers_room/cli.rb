@@ -97,17 +97,6 @@ module WritersRoom
       Commands::Config.new.config
     end
 
-    desc "actor CHARACTER_FILE SCENE_FILE", "Run a single actor"
-    method_option :channel,
-                  aliases: "-r",
-                  type: :string,
-                  default: "writers_room:dialog",
-                  desc: "Redis channel"
-    def actor(character_file, scene_file)
-      require_relative "cli/actor"
-      Commands::Actor.new([], options).actor(character_file, scene_file)
-    end
-
     desc "direct SCENE_FILE", "Direct a scene with multiple actors"
     method_option :characters,
                   aliases: "-c",

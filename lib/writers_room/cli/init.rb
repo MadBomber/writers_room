@@ -34,23 +34,31 @@ module WritersRoom
 
         say "Creating WritersRoom project: #{project_name}", :green
 
-        # Create project with configuration and metadata
+        # Create project config file
+        config_path = File.join(project_path, "config.yml")
+        FileUtils.mkdir_p(project_path)
+
+        config_data = {
+          "provider" => options[:provider],
+          "model_name" => options[:model]
+        }
+        File.write(config_path, YAML.dump(config_data))
+
+        # Create project with metadata
         producer = WritersRoom::Producer.create_project(
           project_path,
           name: project_name,
-          concept: options[:concept],
-          provider: options[:provider],
-          model_name: options[:model]
+          concept: options[:concept]
         )
 
-        say "✓ Created project directory: #{project_path}", :green
-        say "✓ Created configuration: config.yml", :green
-        say "✓ Created project metadata: project.yml", :green
-        say "✓ Created directories: characters, scenes, transcripts, logs", :green
-        say "", :green
+        say "Created project directory: #{project_path}", :green
+        say "Created configuration: config.yml", :green
+        say "Created project metadata: project.yml", :green
+        say "Created directories: characters, scenes, transcripts, arcs", :green
+        say ""
         say "Configuration:", :cyan
-        say "  Provider:   #{producer.config.provider}", :white
-        say "  Model:      #{producer.config.model_name}", :white
+        say "  Provider:   #{options[:provider]}", :white
+        say "  Model:      #{options[:model]}", :white
 
         if options[:concept] && !options[:concept].empty?
           say ""
@@ -58,8 +66,8 @@ module WritersRoom
           say "  #{producer.metadata.concept}", :white
         end
 
-        say "", :green
-        say "Your WritersRoom project is ready! 🎭", :green
+        say ""
+        say "Your WritersRoom project is ready!", :green
         say ""
         say "Next steps:", :cyan
         say "  1. cd #{project_name}", :white
