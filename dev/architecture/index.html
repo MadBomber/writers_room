@@ -642,6 +642,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -658,6 +676,38 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt Templates
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -777,6 +827,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt Templates
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -858,6 +927,17 @@
 
 <h1 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h1>
 <p>TODO: Document system design, class hierarchy, and how Director, Actor, Producer, and Writer interact.</p>
+<h2 id="prompt-templates">Prompt Templates<a class="headerlink" href="#prompt-templates" title="Permanent link">&para;</a></h2>
+<p>LLM prompts are externalized as prompt_manager templates in <code>lib/writers_room/prompts/</code>:</p>
+<ul>
+<li><code>actor_system.md</code> -- System prompt for character actors</li>
+<li><code>actor_dialog.md</code> -- User prompt for dialog generation</li>
+<li><code>develop_concept.md</code> -- Concept development</li>
+<li><code>develop_character.md</code> -- Character profile development</li>
+<li><code>create_arc.md</code> -- Story arc creation</li>
+<li><code>breakdown_scenes.md</code> -- Scene breakdown from arcs</li>
+</ul>
+<p>Templates use markdown with YAML front matter and ERB interpolation. Project-level <code>prompts/</code> directories override gem defaults.</p>
 
 
 
