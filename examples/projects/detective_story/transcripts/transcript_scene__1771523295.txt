@@ -1,0 +1,21 @@
+SCENE : First Report
+Location: 
+Week: 
+
+------------------------------------------------------------
+officer_mike [neutral]: Good morning, Detective. I'm ready to go over the preliminary findings with you.
+detective_sarah [neutral]: Alright, Mike, let’s start with your preliminary findings. Any leads you’re itching to discuss first?
+officer_mike [concerned]: Yes, Detective. I've reviewed the crime scene photos and noted a faint footprint near the broken window—possible shoe size 11. I also retrieved the victim's phone call logs; there's a single unknown number that called around the time of the incident.
+detective_sarah [focused]: Footprint size 11, huh… let me sketch a quick suspect profile on my notepad. That call—did you capture a voice? And who might that number belong to?
+officer_mike [focused]: No, I didn't get any audio from the call—just the ring trace. The number is unlisted and doesn’t appear in the victim's contacts. I'll cross‑reference the billing records to see who it might belong to.
+detective_sarah [determined]: Got it. Pull up that billing report, and while you’re at it, check the CCTV from the alley for any shoe prints that match size 11.
+officer_mike [neutral]: Copy that, Detective. I'm pulling the billing report now and running a 10‑pixel silhouette match on the alley footage for size 11 boots. Will update you as soon as I have the data.
+detective_sarah [neutral]: Sure thing, Mike. Hit me up when you’ve got the data, and I’ll dive into the alley footage for anything that matches those boots.
+officer_mike [neutral]: Will ping you as soon as the billing data comes through and the footage match is processed. In the meantime, keep an eye on the alley footage for anything that fits the boot profile.
+detective_sarah [neutral]: Copy that, Mike. I'll keep a close eye and flag any boot match right away.
+officer_mike [neutral]: Here's the billing report, Detective. The unlisted number is linked to an account for a local courier service; the phone is registered to Jason Lee, a 34‑year‑old delivery driver. On the alley footage, I identified a size‑11 boot imprint that matches the shoe sole pattern we saw at the scene. No other prints matched.
+detective_sarah [focused]: Looks like Jason Lee’s the only match so far. Check his work log for that hour, interview him, and see if he had any motive. In the meantime, cross‑check his vehicle for any surveillance footage.
+officer_mike [neutral]: Copy, Detective. I'm pulling Jason Lee’s work log for the relevant hour and requesting surveillance footage from nearby commercial sites. Will update you as soon as I have those records.
+detective_sarah [neutral]: All right, keep that log and footage coming. I’ll prep an interview and keep a line open for any new impressions from the alley footage.
+officer_mike [concerned]: Will confirm receipt of the work log and CCTV data today. The log shows Jason was assigned to Route 12 at 8:45 pm, with a 30‑minute break at 9:15. The footage from the adjacent gas station is under review; no clear license plates yet.
+detective_sarah [focused]: So Jason was on Route 12 during the time frame. I’ll pull the route map and see if he could have passed by the crime scene. Also, I'll check the gas station footage for any other vehicles or activity, and line up an interview for tomorrow. Anything else you think could narrow his alibi?

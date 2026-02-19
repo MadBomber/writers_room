@@ -1,0 +1,21 @@
+SCENE : The Docks
+Location: 
+Week: 
+
+------------------------------------------------------------
+officer_mike [calm]: Everything's looking good, Sarah. This stretch of dock hasn't changed since last shift.
+detective_sarah [neutral]: Mike, you sure it's all the same? I’m looking for something that slipped past the normal patrol eyes.
+officer_mike [calm]: I can double‑check the entire perimeter, but I doubt any new activity slipped by. What specific area are you checking?
+detective_sarah [neutral]: I’m staring at the old loading dock near the crane, under the torn awning. That’s where the weird footprints have appeared.
+officer_mike [calm]: Okay, Sarah. I’ll focus on the area you mentioned—let's walk the perimeter and check the footprint trail and any debris or signs of recent activity.
+detective_sarah [neutral]: Alright, keep your eyes peeled for any signs of tampering or fresh cargo. Let me know if you find anything odd off the usual path.
+officer_mike [calm]: Copy that, Sarah. I'll cover that stretch and keep an eye on any irregularities or new cargo moves.
+detective_sarah [neutral]: Got it, Mike. Stay sharp, and report back if anything pops up.
+officer_mike [calm]: Sarah, I’m at the back of the dock near the crane. I found a new set of footprints in the mud—roughly twelve inches apart, fresh enough to go through today. There's no debris or broken crates around, but the trail ends near the torn awning.
+detective_sarah [neutral]: Nice. Did you take a photo? And any idea if the prints match our usual crew's shoes, or something heavier?
+officer_mike [calm]: Yeah, I snapped a quick pic on my dash cam. From what I can see, the toe‑box is broader than our standard work boots—looks like a size‑9‑10 sneaker or some kind of cargo shoe. They’re not the same as the crew's boots.
+detective_sarah [neutral]: Thanks, Mike. Let’s get the footwear specs from the logs and see if anyone’s been borrowing those sneakers. If it wasn’t the crew, someone’s slipping in and out of the dock under the cover of night.
+officer_mike [calm]: I'll pull the footwear inventory now and cross‑check any recent check‑outs for size‑9‑10 sneakers; let me know if you spot anything else that might have been tampered with.
+detective_sarah [neutral]: Alright, Mike. While you’re at it, check the night footage for that spot—any lone figure, any bike, any delivery drone. Flag anything that looks off.
+officer_mike [calm]: On it. I'll pull the night feed for the tunnel section, watch for any irregular activity, and let you know if anything stands out.
+detective_sarah [neutral]: Sure thing. Keep me posted on any oddities. I’ll dive into the logs for the sneaker check‑outs.

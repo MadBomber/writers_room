@@ -25,9 +25,9 @@ MAX_LINES=20
 PROJECT_DIR=""
 SKIP_LLM=false
 
+ORIG_DIR="$(pwd)"
 EXAMPLES_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR=$EXAMPLES_DIR/..
-PROJECTS_DIR=$EXAMPLES_DIR/projects
 DEMO_DIR=""
 START_TIME=""
 
@@ -171,12 +171,16 @@ fi
 info "CLI is available."
 echo ""
 
-# Create the demo project in the specified directory (default: PWD)
+# Create the demo project in the specified directory (default: where user ran the script)
 if [[ -n "$PROJECT_DIR" ]]; then
+    # Resolve relative paths against the original working directory
+    if [[ "$PROJECT_DIR" != /* ]]; then
+        PROJECT_DIR="$ORIG_DIR/$PROJECT_DIR"
+    fi
     mkdir -p "$PROJECT_DIR"
     DEMO_PARENT="$(cd "$PROJECT_DIR" && pwd)"
 else
-    DEMO_PARENT="$(pwd)"
+    DEMO_PARENT="$ORIG_DIR"
 fi
 DEMO_DIR="$DEMO_PARENT/detective_story"
 
