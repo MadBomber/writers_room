@@ -54,6 +54,16 @@ module WritersRoom
       )
 
       setup_message_handler
+      subscribe_to_scene
+    end
+
+    # Unsubscribe from the scene channel before disconnecting.
+    def disconnect
+      if @bus && @scene_subscriber_id
+        @bus.unsubscribe(:scene, @scene_subscriber_id)
+        @scene_subscriber_id = nil
+      end
+      super
     end
 
     private
@@ -182,6 +192,16 @@ module WritersRoom
       end
 
       lines.join("\n")
+    end
+
+    # Subscribe to the shared :scene channel so actors hear each other.
+    # RobotLab's super only subscribes to the actor's own named channel.
+    def subscribe_to_scene
+      return unless @bus
+
+      @scene_subscriber_id = @bus.subscribe(:scene) do |delivery|
+        send(:handle_incoming_delivery, delivery)
+      end
     end
 
     def heartbeat_message?(content)

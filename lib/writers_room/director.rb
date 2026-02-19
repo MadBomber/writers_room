@@ -7,6 +7,7 @@
 #
 
 require "yaml"
+require "fileutils"
 
 module WritersRoom
   # Director orchestrates a scene using the Room pattern.
@@ -74,7 +75,11 @@ module WritersRoom
     #
     # @param filename [String] Output filename
     def save_transcript(filename = nil)
-      filename ||= "transcript_scene_#{@scene_info[:scene_number]}_#{Time.now.to_i}.txt"
+      unless filename
+        transcripts_dir = detect_transcripts_dir(@scene_file)
+        FileUtils.mkdir_p(transcripts_dir)
+        filename = File.join(transcripts_dir, "transcript_scene_#{@scene_info[:scene_number]}_#{Time.now.to_i}.txt")
+      end
 
       File.open(filename, "w") do |file|
         file.puts "SCENE #{@scene_info[:scene_number]}: #{@scene_info[:scene_name]}"
@@ -200,6 +205,15 @@ module WritersRoom
 
         The scene begins now. Stay in character and use the speak tool to deliver your dialog.
       PROMPT
+    end
+
+    def detect_transcripts_dir(scene_file)
+      scene_path = File.expand_path(scene_file)
+      scene_dir = File.dirname(scene_path)
+
+      # scenes/ is a sibling of transcripts/ in the project
+      project_dir = File.expand_path(File.join(scene_dir, ".."))
+      File.join(project_dir, "transcripts")
     end
 
     def shutdown_actors

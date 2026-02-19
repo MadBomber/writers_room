@@ -11,6 +11,7 @@
 #   --provider NAME    LLM provider (default: ollama)
 #   --model NAME       Model name (default: gpt-oss:20b)
 #   --max-lines N      Max dialog lines per scene (default: 20)
+#   --dir PATH         Directory to create the project in (default: PWD)
 #   --skip-llm         Only run non-LLM steps (useful for CI)
 #
 
@@ -21,6 +22,7 @@
 PROVIDER="ollama"
 MODEL="gpt-oss:20b"
 MAX_LINES=20
+PROJECT_DIR=""
 SKIP_LLM=false
 
 EXAMPLES_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -67,7 +69,7 @@ step() { echo -e "${BOLD}>>> $*${RESET}"; }
 
 # Shorten command display: replace the full bundle exec path with just "wr"
 pretty_cmd() {
-    echo "$*" | sed "s|bundle exec $SCRIPT_DIR/bin/wr|wr|"
+    echo "$*" | sed "s|bundle exec $ROOT_DIR/bin/wr|wr|"
 }
 
 run_cmd() {
@@ -109,6 +111,10 @@ while [[ $# -gt 0 ]]; do
         MAX_LINES="$2"
         shift 2
         ;;
+    --dir)
+        PROJECT_DIR="$2"
+        shift 2
+        ;;
     --skip-llm)
         SKIP_LLM=true
         shift
@@ -120,6 +126,7 @@ while [[ $# -gt 0 ]]; do
         echo "  --provider NAME    LLM provider (default: ollama)"
         echo "  --model NAME       Model name (default: gpt-oss:20b)"
         echo "  --max-lines N      Max dialog lines per scene (default: 20)"
+        echo "  --dir PATH         Directory to create the project in (default: PWD)"
         echo "  --skip-llm         Only run non-LLM steps (useful for CI)"
         echo "  -h, --help         Show this help"
         exit 0
@@ -151,21 +158,26 @@ echo ""
 
 banner "Checking Prerequisites"
 
-cd "$SCRIPT_DIR" || {
-    err "Cannot cd to $SCRIPT_DIR"
+cd "$ROOT_DIR" || {
+    err "Cannot cd to $ROOT_DIR"
     exit 1
 }
 
 step "Verifying 'wr' CLI is available..."
 if ! $WR version >/dev/null 2>&1; then
-    err "'$WR version' failed. Run 'bundle install' in $SCRIPT_DIR first."
+    err "'$WR version' failed. Run 'bundle install' in $ROOT_DIR first."
     exit 1
 fi
 info "CLI is available."
 echo ""
 
-# Create the demo project in the current working directory
-DEMO_PARENT="$(pwd)"
+# Create the demo project in the specified directory (default: PWD)
+if [[ -n "$PROJECT_DIR" ]]; then
+    mkdir -p "$PROJECT_DIR"
+    DEMO_PARENT="$(cd "$PROJECT_DIR" && pwd)"
+else
+    DEMO_PARENT="$(pwd)"
+fi
 DEMO_DIR="$DEMO_PARENT/detective_story"
 
 info "Demo project will be created at: $DEMO_DIR"
