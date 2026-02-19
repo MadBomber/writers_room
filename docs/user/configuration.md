@@ -75,7 +75,7 @@ export WRITERS_ROOM_PROVIDER=openai
 export WRITERS_ROOM_MODEL_NAME=gpt-4
 export OPENAI_API_KEY=sk-your-key-here
 
-wr direct scenes/scene_01.yml
+wr direct scenes/scene_01.md
 ```
 
 Or set it per-project in `config.yml`:
@@ -93,7 +93,7 @@ export WRITERS_ROOM_PROVIDER=anthropic
 export WRITERS_ROOM_MODEL_NAME=claude-sonnet-4-20250514
 export ANTHROPIC_API_KEY=sk-ant-your-key-here
 
-wr direct scenes/scene_01.yml
+wr direct scenes/scene_01.md
 ```
 
 ### Remote Ollama Server
@@ -102,7 +102,7 @@ wr direct scenes/scene_01.yml
 export WRITERS_ROOM_OLLAMA_URL=http://192.168.1.100:11434
 export WRITERS_ROOM_MODEL_NAME=mixtral
 
-wr direct scenes/scene_01.yml
+wr direct scenes/scene_01.md
 ```
 
 ## Viewing Current Configuration
@@ -118,5 +118,5 @@ Displays the resolved configuration for the current project directory.
 Enable debug output:
 
 ```bash
-DEBUG_ME=1 wr direct scenes/scene_01.yml
+DEBUG_ME=1 wr direct scenes/scene_01.md
 ```

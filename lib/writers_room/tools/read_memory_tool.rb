@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "json"
+
 module WritersRoom
   class ReadMemoryTool < RobotLab::Tool
     description "Read a value from shared scene memory. " \
@@ -15,6 +17,8 @@ module WritersRoom
       value = memory.get(key.to_sym)
       if value.nil?
         "Key '#{key}' is not set yet."
+      elsif value.is_a?(Array) || value.is_a?(Hash)
+        JSON.pretty_generate(value)
       else
         value.to_s
       end

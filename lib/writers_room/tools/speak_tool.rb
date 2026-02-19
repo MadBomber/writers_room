@@ -2,6 +2,8 @@
 
 module WritersRoom
   class SpeakTool < RobotLab::Tool
+    DIALOG_MUTEX = Mutex.new
+
     description "Speak dialog to the scene. All other characters will hear you. " \
                 "Use this to say your line in character."
 
@@ -16,17 +18,19 @@ module WritersRoom
         content: dialog
       )
 
-      # Record in shared memory
+      # Record in shared memory (mutex protects read-modify-write)
       memory = robot.shared_memory
       if memory
-        history = memory.get(:dialog_history) || []
-        history << {
-          from: robot.name,
-          content: dialog,
-          emotion: emotion,
-          timestamp: Time.now.to_i
-        }
-        memory.set(:dialog_history, history)
+        DIALOG_MUTEX.synchronize do
+          history = memory.get(:dialog_history) || []
+          history << {
+            from: robot.name,
+            content: dialog,
+            emotion: emotion,
+            timestamp: Time.now.to_i
+          }
+          memory.set(:dialog_history, history)
+        end
       end
 
       robot.display&.dialog(robot.name, dialog, emotion: emotion)

@@ -16,7 +16,7 @@ module WritersRoom
   #
   # Instead of manual sleep-polling, the Director:
   # - Creates a Room (bus + memory + roster)
-  # - Loads actors from .md character files (with .yml fallback)
+  # - Loads actors from .md character files
   # - Seeds the scene with an opening prompt
   # - Lets Room.wait_for_completion handle the event loop
   # - Assembles transcript from shared memory
@@ -25,7 +25,7 @@ module WritersRoom
 
     # Initialize the Director.
     #
-    # @param scene_file [String] Path to scene .md or .yml file
+    # @param scene_file [String] Path to scene .md file
     # @param character_dir [String] Directory containing character files (optional, auto-detected)
     # @param max_lines [Integer] Maximum dialog lines before scene ends
     def initialize(scene_file:, character_dir: nil, max_lines: nil)
@@ -49,9 +49,7 @@ module WritersRoom
         scene_info: @scene_info
       )
 
-      debug_me("Director initialized") {
-        [@scene_info[:scene_name], @scene_info[:characters]&.join(", "), @character_dir]
-      }
+      debug_me "Director initialized: scene=#{@scene_info[:scene_name]} characters=#{@scene_info[:characters]&.join(', ')} char_dir=#{@character_dir}"
     end
 
     # Start the scene with all actors.
@@ -127,37 +125,31 @@ module WritersRoom
         character_dir = File.join("projects", project_name, "characters")
 
         if Dir.exist?(character_dir)
-          debug_me("Auto-detected character directory") { character_dir }
+          debug_me "Auto-detected character directory: #{character_dir}"
           return character_dir
         end
       end
 
       character_dir = File.join(scene_dir, "..", "characters")
       if Dir.exist?(character_dir)
-        debug_me("Found character directory relative to scene") { character_dir }
+        debug_me "Found character directory relative to scene: #{character_dir}"
         return File.expand_path(character_dir)
       end
 
-      debug_me("Using default character directory") { "characters" }
+      debug_me "Using default character directory: characters"
       "characters"
     end
 
-    # Load scene file (.md with front matter preferred, .yml fallback).
+    # Load scene file (.md with front matter).
     def load_scene
       unless File.exist?(@scene_file)
         raise "Scene file not found: #{@scene_file}"
       end
 
-      if @scene_file.end_with?(".md")
-        parsed = FrontMatter.load_file(@scene_file)
-        # Merge body into scene_info as :context
-        scene = parsed[:metadata]
-        scene[:body] = parsed[:body]
-        scene
-      else
-        scene = YAML.load_file(@scene_file)
-        scene.transform_keys(&:to_sym)
-      end
+      parsed = FrontMatter.load_file(@scene_file)
+      scene = parsed[:metadata]
+      scene[:body] = parsed[:body]
+      scene
     end
 
     # Load actors from character files into the Room.
@@ -180,27 +172,17 @@ module WritersRoom
       @display.director_note("All actors ready!")
     end
 
-    # Load a character file (.md preferred, .yml fallback).
+    # Load a character file (.md with front matter).
     def load_character(character_name)
       slug = character_name.downcase.gsub(/\s+/, "_")
-
-      # Try .md first
       md_file = File.join(@character_dir, "#{slug}.md")
-      if File.exist?(md_file)
-        parsed = FrontMatter.load_file(md_file)
-        info = parsed[:metadata]
-        info[:body] = parsed[:body]
-        return info
-      end
 
-      # Fall back to .yml
-      yml_file = File.join(@character_dir, "#{slug}.yml")
-      if File.exist?(yml_file)
-        data = YAML.load_file(yml_file)
-        return data.transform_keys(&:to_sym)
-      end
+      return nil unless File.exist?(md_file)
 
-      nil
+      parsed = FrontMatter.load_file(md_file)
+      info = parsed[:metadata]
+      info[:body] = parsed[:body]
+      info
     end
 
     # Seed the scene with the opening context.

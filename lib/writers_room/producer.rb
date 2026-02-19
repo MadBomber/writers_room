@@ -6,7 +6,6 @@ require "fileutils"
 module WritersRoom
   # Producer manages the overall production: creates characters, scenes,
   # and coordinates directors to run the full production.
-  # Supports .md (front matter) files with .yml fallback.
   class Producer
     attr_reader :project_path, :metadata
 
@@ -14,7 +13,6 @@ module WritersRoom
       @project_path = File.expand_path(project_path)
 
       unless File.exist?(File.join(@project_path, "config.yml")) ||
-             File.exist?(File.join(@project_path, "project.yml")) ||
              File.exist?(File.join(@project_path, "project.md"))
         raise Error, "No project found. Run 'wr init <project_name>' first."
       end
@@ -63,9 +61,7 @@ module WritersRoom
       characters_dir = File.join(@project_path, "characters")
       character_file = File.join(characters_dir, "#{sanitize_filename(name)}.md")
 
-      # Also check for legacy .yml
-      yml_file = File.join(characters_dir, "#{sanitize_filename(name)}.yml")
-      if File.exist?(character_file) || File.exist?(yml_file)
+      if File.exist?(character_file)
         raise Error, "Character '#{name}' already exists"
       end
 
@@ -91,9 +87,7 @@ module WritersRoom
       scenes_dir = File.join(@project_path, "scenes")
       scene_file = File.join(scenes_dir, "#{sanitize_filename(name)}.md")
 
-      # Also check for legacy .yml
-      yml_file = File.join(scenes_dir, "#{sanitize_filename(name)}.yml")
-      if File.exist?(scene_file) || File.exist?(yml_file)
+      if File.exist?(scene_file)
         raise Error, "Scene '#{name}' already exists"
       end
 
@@ -111,23 +105,14 @@ module WritersRoom
       scene_file
     end
 
-    # List all characters in the project (glob .md first, then .yml)
+    # List all characters in the project
     def list_characters
       characters_dir = File.join(@project_path, "characters")
       return [] unless Dir.exist?(characters_dir)
 
-      files = Dir.glob(File.join(characters_dir, "*.md"))
-      files += Dir.glob(File.join(characters_dir, "*.yml"))
-
-      # Deduplicate by basename stem
-      seen = {}
-      files.each_with_object([]) do |file, result|
-        stem = File.basename(file, File.extname(file))
-        next if seen[stem]
-
-        seen[stem] = true
+      Dir.glob(File.join(characters_dir, "*.md")).map do |file|
         data = load_character_file(file)
-        result << {
+        {
           name: data["name"] || data[:name],
           file: file,
           personality: data.dig("traits", "personality") || data.dig(:traits, :personality)
@@ -135,23 +120,14 @@ module WritersRoom
       end
     end
 
-    # List all scenes in the project (glob .md first, then .yml)
+    # List all scenes in the project
     def list_scenes
       scenes_dir = File.join(@project_path, "scenes")
       return [] unless Dir.exist?(scenes_dir)
 
-      files = Dir.glob(File.join(scenes_dir, "*.md"))
-      files += Dir.glob(File.join(scenes_dir, "*.yml"))
-
-      # Deduplicate by basename stem
-      seen = {}
-      files.each_with_object([]) do |file, result|
-        stem = File.basename(file, File.extname(file))
-        next if seen[stem]
-
-        seen[stem] = true
+      Dir.glob(File.join(scenes_dir, "*.md")).map do |file|
         data = load_scene_file(file)
-        result << {
+        {
           name: data["scene_name"] || data[:scene_name],
           file: file,
           characters: data["characters"] || data[:characters] || []
@@ -281,32 +257,18 @@ module WritersRoom
       name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/(^_|_$)/, "")
     end
 
-    # Find scene files (.md preferred, .yml fallback)
     def find_scene_files
-      md_files = Dir.glob(File.join(@project_path, "scenes", "*.md"))
-      return md_files if md_files.any?
-
-      Dir.glob(File.join(@project_path, "scenes", "*.yml"))
+      Dir.glob(File.join(@project_path, "scenes", "*.md"))
     end
 
-    # Load a character file (.md or .yml)
     def load_character_file(file)
-      if file.end_with?(".md")
-        parsed = FrontMatter.load_file(file, symbolize_keys: false)
-        parsed[:metadata]
-      else
-        YAML.load_file(file)
-      end
+      parsed = FrontMatter.load_file(file, symbolize_keys: false)
+      parsed[:metadata]
     end
 
-    # Load a scene file (.md or .yml)
     def load_scene_file(file)
-      if file.end_with?(".md")
-        parsed = FrontMatter.load_file(file, symbolize_keys: false)
-        parsed[:metadata]
-      else
-        YAML.load_file(file)
-      end
+      parsed = FrontMatter.load_file(file, symbolize_keys: false)
+      parsed[:metadata]
     end
   end
 end

@@ -23,6 +23,8 @@ module WritersRoom
     attr_reader :character_name, :character_info, :scene_info
     attr_accessor :shared_memory, :display, :room
 
+    RECENT_DIALOG_LIMIT = 10
+
     # Initialize an Actor with character information.
     #
     # @param character_info [Hash] Character details (from .md front matter)
@@ -43,16 +45,17 @@ module WritersRoom
 
       validate_character_info!
 
+      @actor_context = build_template_context
+
       super(
         name:        @character_name.downcase.gsub(/\s+/, "_"),
         template:    :actor_system,
-        context:     build_template_context,
+        context:     @actor_context,
         bus:         bus,
         config:      config,
         local_tools: build_tools
       )
 
-      setup_room_subscription
       setup_message_handler
 
       debug_me("Actor initialized with template + tools") { @character_name }
@@ -79,16 +82,15 @@ module WritersRoom
     def build_template_context
       {
         character_name:   @character_name,
-        age:              fetch_field(:age, 16),
+        age:              fetch_field(:age, ""),
         personality:      extract_personality,
         voice_pattern:    extract_voice_pattern,
-        sport:            fetch_field(:sport, ""),
+        background:       extract_background,
         current_arc:      extract_current_arc,
         relationships:    format_relationships,
         scene_name:       fetch_field(:scene_name, "", from: @scene_info),
         scene_number:     fetch_field(:scene_number, "", from: @scene_info),
         location:         fetch_field(:location, "", from: @scene_info),
-        week:             fetch_field(:week, "", from: @scene_info),
         objectives:       extract_objectives,
         characters_present: Array(fetch_field(:characters, [], from: @scene_info)).join(", "),
         project_concept:  fetch_field(:concept, "", from: @scene_info),
@@ -102,34 +104,32 @@ module WritersRoom
 
     # Extract personality from either top-level or body sections.
     def extract_personality
-      # Try top-level field first
       personality = fetch_field(:personality)
       return personality if personality
 
-      # Try traits hash (from Producer-created files)
       traits = @character_info[:traits] || @character_info["traits"]
       return traits[:personality] || traits["personality"] if traits
 
       ""
     end
 
-    # Extract voice pattern from either top-level or body.
     def extract_voice_pattern
-      fetch_field(:voice_pattern) || ""
+      fetch_field(:voice_pattern) || fetch_field(:speaking_style) || ""
     end
 
-    # Extract current arc from character info or body.
+    def extract_background
+      fetch_field(:background) || ""
+    end
+
     def extract_current_arc
       fetch_field(:current_arc) || ""
     end
 
-    # Extract objectives from scene info.
     def extract_objectives
       objectives = fetch_field(:objectives, "", from: @scene_info)
       objectives.is_a?(Array) ? objectives.join("; ") : objectives.to_s
     end
 
-    # Format relationships for the template.
     def format_relationships
       rels = @character_info[:relationships] || @character_info["relationships"]
       return "No specific relationships defined" unless rels
@@ -141,41 +141,24 @@ module WritersRoom
       end
     end
 
-    def setup_room_subscription
-      @bus.subscribe(:scene) do |delivery|
-        handle_incoming_delivery(delivery)
-      end
-    end
-
-    # Reset the chat to a clean state with system prompt and tools.
+    # Reset the chat to a clean state using Robot's public update API.
     # Prevents history corruption from tool-only LLM responses
     # (empty text content blocks that Anthropic rejects).
     def fresh_chat!
-      resolved_model = @config&.model || RobotLab.config.ruby_llm.model
-      @chat = RubyLLM.chat(model: resolved_model)
-      apply_template_to_chat(@build_context) if @template
-      @chat.with_instructions(@system_prompt) if @system_prompt
-      @chat.with_temperature(@config.temperature) if @config&.temperature
-
-      filtered = filtered_tools([])
-      @chat.with_tools(*filtered) if filtered.any?
+      update(template: :actor_system, context: @actor_context)
     end
 
     def setup_message_handler
       on_message do |message|
-        # Don't respond to your own messages
         next if message.from == name
+        next if heartbeat_message?(message.content)
 
         @messages_processed += 1
         @display&.incoming(name, message.from, message.content)
 
-        # Fresh chat for each message -- shared memory is our persistence
         fresh_chat!
 
-        # Build prompt with current memory context
-        memory_keys = @shared_memory&.keys || []
-        prompt = "[#{message.from}]: #{message.content}"
-        prompt += "\n\n[Memory keys: #{memory_keys.join(', ')}]" if memory_keys.any?
+        prompt = build_turn_prompt(message)
 
         begin
           result = run(prompt)
@@ -186,11 +169,29 @@ module WritersRoom
       end
     end
 
-    # Handle incoming bus delivery (called from subscription)
-    def handle_incoming_delivery(delivery)
-      message = delivery.message
-      msg_content = message.respond_to?(:content) ? message.content : message
-      delivery.ack!
+    # Build the prompt for this turn, including recent dialog history.
+    def build_turn_prompt(message)
+      lines = ["[#{message.from}]: #{message.content}"]
+
+      if @shared_memory
+        history = @shared_memory.get(:dialog_history) || []
+        recent = history.last(RECENT_DIALOG_LIMIT)
+
+        if recent.any?
+          lines << ""
+          lines << "[Recent dialog]"
+          recent.each do |entry|
+            emotion_tag = entry[:emotion] ? " [#{entry[:emotion]}]" : ""
+            lines << "#{entry[:from]}#{emotion_tag}: #{entry[:content]}"
+          end
+        end
+      end
+
+      lines.join("\n")
+    end
+
+    def heartbeat_message?(content)
+      content.to_s.start_with?("[ROOM STATUS]")
     end
   end
 end

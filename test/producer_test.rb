@@ -206,18 +206,15 @@ class ProducerTest < Minitest::Test
            "Expected project.md to exist"
   end
 
-  def test_reads_legacy_yml_files
-    # Create a legacy .yml character file
+  def test_list_characters_ignores_non_md_files
+    # Non-.md files should not appear in character listings
     characters_dir = File.join(@project_path, "characters")
-    yml_file = File.join(characters_dir, "legacy_char.yml")
-    File.write(yml_file, YAML.dump({
-      "name" => "Legacy",
-      "traits" => { "personality" => "old-school" }
-    }))
+    yml_file = File.join(characters_dir, "stray.yml")
+    File.write(yml_file, "name: Stray")
 
+    @producer.create_character("Alice")
     characters = @producer.list_characters
-    legacy = characters.find { |c| c[:name] == "Legacy" }
-    assert legacy, "Expected to find legacy .yml character"
-    assert_equal "old-school", legacy[:personality]
+    assert_equal 1, characters.count
+    assert_equal "Alice", characters.first[:name]
   end
 end

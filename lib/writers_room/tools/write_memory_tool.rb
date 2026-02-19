@@ -2,6 +2,8 @@
 
 module WritersRoom
   class WriteMemoryTool < RobotLab::Tool
+    RESERVED_KEYS = %i[scene_complete dialog_history line_count].freeze
+
     description "Write a value to shared scene memory for all characters to see. " \
                 "Use to store observations, notes, or scene state."
 
@@ -14,7 +16,12 @@ module WritersRoom
       memory = robot.shared_memory
       return "No shared memory available." unless memory
 
-      memory.set(key.to_sym, value)
+      sym_key = key.to_sym
+      if RESERVED_KEYS.include?(sym_key)
+        return "Cannot write to reserved key '#{key}'. Reserved keys: #{RESERVED_KEYS.join(', ')}"
+      end
+
+      memory.set(sym_key, value)
       robot.display&.memory_write(robot.name, key)
       "Stored '#{key}' in shared memory."
     end

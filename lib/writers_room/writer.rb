@@ -19,7 +19,6 @@ module WritersRoom
       @project_path = File.expand_path(project_path)
 
       unless File.exist?(File.join(@project_path, "config.yml")) ||
-             File.exist?(File.join(@project_path, "project.yml")) ||
              File.exist?(File.join(@project_path, "project.md"))
         raise Error, "No project found. Run 'wr init <project_name>' first."
       end

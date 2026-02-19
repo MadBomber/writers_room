@@ -140,7 +140,7 @@ module WritersRoom
       print_section_header("Director Commands")
 
       print_command("direct", "Direct a scene with in-process actors")
-      print_option("SCENE_FILE", "Scene file (.md or .yml)", indent: 4)
+      print_option("SCENE_FILE", "Scene file (.md)", indent: 4)
       print_option("-c, --characters DIR", "Character directory (auto-detected)", indent: 4)
       print_option("-o, --output FILE", "Transcript output file", indent: 4)
       print_option("-l, --max-lines N", "Maximum lines before ending (default: 50)", indent: 4)
