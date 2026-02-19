@@ -44,14 +44,19 @@ module WritersRoom
       actor
     end
 
-    # Seed the scene by having the first actor speak.
+    # Seed the scene by publishing the opening prompt from the "director".
+    # Uses a director identity so actors don't filter it as their own message.
     #
     # @param opening_prompt [String] initial context to send
     def seed(opening_prompt)
-      first = @actors.values.first
-      return unless first
+      return if @actors.empty?
 
-      first.send_message(to: :scene, content: opening_prompt)
+      message = RobotLab::RobotMessage.build(
+        id: 0,
+        from: "director",
+        content: opening_prompt
+      )
+      Async { @bus.publish(:scene, message) }
     end
 
     # Wait for the scene to complete.
@@ -64,6 +69,7 @@ module WritersRoom
     def wait_for_completion(timeout: 300, max_lines: 50, poll_interval: 2, heartbeat_interval: 30)
       deadline = Time.now + timeout
       last_heartbeat = Time.now
+      @last_line_count = 0
 
       loop do
         # Check if scene was marked complete by an actor
@@ -86,9 +92,15 @@ module WritersRoom
           return false
         end
 
-        # Heartbeat: nudge actors with a status update
+        # Heartbeat: display status and nudge actors if dialog has stalled
         if Time.now - last_heartbeat >= heartbeat_interval
           send_heartbeat(history.length, max_lines)
+
+          if history.length == @last_line_count
+            send_director_nudge(history)
+          end
+
+          @last_line_count = history.length
           last_heartbeat = Time.now
         end
 
@@ -120,10 +132,23 @@ module WritersRoom
       remaining = max_lines - current_lines
       status = "[ROOM STATUS] #{current_lines}/#{max_lines} lines spoken. #{remaining} remaining."
       @display.info(status)
+    end
 
-      # Send through a random actor to keep the conversation moving
-      sender = @actors.values.sample
-      sender&.send_message(to: :scene, content: status)
+    # Send a director nudge to re-engage actors when dialog has stalled.
+    def send_director_nudge(history)
+      characters = @actors.keys.join(", ")
+      last_line = history.last
+      context = last_line ? "The last line was from #{last_line[:from]}." : ""
+
+      nudge = "[DIRECTOR] The scene needs to continue. #{context} " \
+              "Characters present: #{characters}. Keep the dialog going — use the speak tool."
+
+      message = RobotLab::RobotMessage.build(
+        id: Time.now.to_i,
+        from: "director",
+        content: nudge
+      )
+      Async { @bus.publish(:scene, message) }
     end
   end
 end

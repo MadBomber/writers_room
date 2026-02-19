@@ -165,8 +165,8 @@ module WritersRoom
         character_info = load_character(character_name)
 
         unless character_info
-          @display.info("  Warning: Character file not found for: #{character_name}")
-          next
+          @display.info("  Note: No character file for #{character_name}, using defaults")
+          character_info = default_character_info(character_name)
         end
 
         @display.info("  - #{character_name} is taking their position...")
@@ -201,6 +201,17 @@ module WritersRoom
       info = parsed[:metadata]
       info[:body] = parsed[:body]
       info
+    end
+
+    # Build minimal character info when no file exists.
+    def default_character_info(character_name)
+      {
+        name: character_name,
+        personality: "natural and conversational",
+        speaking_style: "conversational",
+        background: "",
+        body: ""
+      }
     end
 
     # Seed the scene with the opening context.

@@ -222,13 +222,22 @@ module WritersRoom
 
       transcripts.each do |transcript|
         content = File.read(transcript)
-        lines = content.lines
+        in_dialog = false
 
-        lines.each do |line|
+        content.each_line do |line|
+          # Dialog starts after the separator line
+          if line.start_with?("---")
+            in_dialog = true
+            next
+          end
+          next unless in_dialog
           next if line.strip.empty?
-          next unless line.match?(/^(\w+):/)
 
-          character = line.match(/^(\w+):/)[1]
+          # Match "character_name:" or "character_name [emotion]:"
+          match = line.match(/^(\w+)(\s+\[.*?\])?:\s/)
+          next unless match
+
+          character = match[1]
           total_characters[character] ||= 0
           total_characters[character] += 1
           total_lines += 1
