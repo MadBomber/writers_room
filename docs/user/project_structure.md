@@ -143,6 +143,57 @@ for practice at the same time due to a scheduling error.
 | Scene Objectives | Per-character goals for the scene |
 | Beat Structure | Sequence of dramatic beats with timing |
 
+## Prompt Templates
+
+WritersRoom uses [prompt_manager](https://github.com/madbomber/prompt_manager)
+for its LLM prompts. Templates are markdown files with YAML front matter and
+ERB interpolation.
+
+Default templates ship with the gem in `lib/writers_room/prompts/`:
+
+| Template | Purpose |
+|----------|---------|
+| `actor_system.md` | Character identity and scene instructions |
+| `actor_dialog.md` | Dialog generation from conversation history |
+| `develop_concept.md` | Expand a project concept |
+| `develop_character.md` | Build a detailed character profile |
+| `create_arc.md` | Create a story arc outline |
+| `breakdown_scenes.md` | Break an arc into individual scenes |
+
+To customize prompts for a project, create a `prompts/` directory in your
+project and add your own versions. Project-level prompts override the gem
+defaults.
+
+```
+my_project/
+  prompts/                        # Optional per-project prompt overrides
+    actor_system.md               # Custom character instructions
+    develop_concept.md            # Custom concept development style
+  config.yml
+  project.md
+  characters/
+  scenes/
+  ...
+```
+
+Templates use ERB for variable interpolation:
+
+```markdown
+---
+description: System prompt for character actors
+parameters:
+  character_name: null
+  personality: null
+---
+You are <%= character_name %>.
+
+## Personality
+
+<%= personality %>
+```
+
+See the default templates in the gem for the full set of available variables.
+
 ## Character Directory Auto-Detection
 
 When you run `wr direct scenes/scene_01.md`, WritersRoom locates characters automatically:

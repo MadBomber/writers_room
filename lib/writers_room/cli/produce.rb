@@ -41,7 +41,8 @@ module WritersRoom
 
         # Use all scenes if none specified
         if scene_files.empty?
-          scene_files = Dir.glob(File.join(Dir.pwd, "scenes", "*.yml"))
+          scene_files = Dir.glob(File.join(Dir.pwd, "scenes", "*.md"))
+          scene_files = Dir.glob(File.join(Dir.pwd, "scenes", "*.yml")) if scene_files.empty?
           if scene_files.empty?
             say "No scene files found in scenes/ directory", :yellow
             exit 1

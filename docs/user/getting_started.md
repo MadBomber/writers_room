@@ -98,6 +98,14 @@ wr report
 
 Summarizes all transcripts with line counts per character and scene statistics.
 
+## Customizing Prompts
+
+WritersRoom ships with default LLM prompt templates. To customize how
+characters behave or how the writer tools generate content, create a
+`prompts/` directory in your project and add your own template overrides.
+
+See [Project Structure](project_structure.md#prompt-templates) for details.
+
 ## Troubleshooting
 
 **"No output from scenes"**

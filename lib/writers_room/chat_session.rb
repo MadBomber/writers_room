@@ -6,12 +6,16 @@ include DebugMe
 require "io/console"
 
 module WritersRoom
-  # Interactive chat session with LLM for creative consultation
+  # Interactive chat session with LLM for creative consultation.
+  # Uses LLMSetup for shared configuration instead of duplicating setup.
   class ChatSession
     attr_reader :robot, :context, :messages
 
-    def initialize(context: {})
+    # @param context [Hash] conversation context (project info, task, etc.)
+    # @param template [Symbol, nil] optional RobotLab template for the session
+    def initialize(context: {}, template: nil)
       @context = context
+      @template = template
       @messages = []
       setup_robot
 
@@ -93,32 +97,25 @@ module WritersRoom
     private
 
     def setup_robot
-      config = WritersRoom.config
-      provider = config.provider
-      model = config.model_name
+      run_config = LLMSetup.build_run_config
 
-      configure_ruby_llm(provider)
-
-      @robot = RobotLab.build(
-        name: "chat_session",
-        model: model,
-        system_prompt: build_system_prompt
-      )
+      if @template
+        @robot = RobotLab.build(
+          name: "chat_session",
+          template: @template,
+          context: @context,
+          config: run_config
+        )
+      else
+        @robot = RobotLab.build(
+          name: "chat_session",
+          system_prompt: build_system_prompt,
+          config: run_config
+        )
+      end
 
       debug_me("Robot setup complete for ChatSession") do
-        [provider, model]
-      end
-    end
-
-    def configure_ruby_llm(provider)
-      RubyLLM.configure do |c|
-        if provider == "ollama"
-          c.ollama_api_base = WritersRoom.config.ollama_url
-        elsif provider == "openai"
-          c.openai_api_key = ENV["OPENAI_API_KEY"]
-        elsif provider == "anthropic"
-          c.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
-        end
+        [WritersRoom.config.provider, WritersRoom.config.model_name]
       end
     end
 

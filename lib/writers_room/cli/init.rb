@@ -53,7 +53,7 @@ module WritersRoom
 
         say "Created project directory: #{project_path}", :green
         say "Created configuration: config.yml", :green
-        say "Created project metadata: project.yml", :green
+        say "Created project metadata: project.md", :green
         say "Created directories: characters, scenes, transcripts, arcs", :green
         say ""
         say "Configuration:", :cyan

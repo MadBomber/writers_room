@@ -12,59 +12,71 @@ include DebugMe
 require "yaml"
 
 module WritersRoom
+  # Director orchestrates a scene using the Room pattern.
+  #
+  # Instead of manual sleep-polling, the Director:
+  # - Creates a Room (bus + memory + roster)
+  # - Loads actors from .md character files (with .yml fallback)
+  # - Seeds the scene with an opening prompt
+  # - Lets Room.wait_for_completion handle the event loop
+  # - Assembles transcript from shared memory
   class Director
-    attr_reader :scene_info, :actors, :transcript
+    attr_reader :scene_info, :transcript, :room
 
-    # Initialize the Director
+    # Initialize the Director.
     #
-    # @param scene_file [String] Path to scene YAML file
-    # @param character_dir [String] Directory containing character YAML files (optional, auto-detected)
+    # @param scene_file [String] Path to scene .md or .yml file
+    # @param character_dir [String] Directory containing character files (optional, auto-detected)
     # @param max_lines [Integer] Maximum dialog lines before scene ends
     def initialize(scene_file:, character_dir: nil, max_lines: nil)
       @scene_file = scene_file
       @character_dir = character_dir || detect_character_dir(scene_file)
       @scene_info = load_scene
-      @actors = []
+      @max_lines = max_lines || ENV["MAX_LINES"]&.to_i || 50
       @transcript = []
       @running = false
-      @max_lines = max_lines || ENV["MAX_LINES"]&.to_i || 50
-      @bus = TypedBus::MessageBus.new
+
+      # Build shared config via LLMSetup
+      @run_config = LLMSetup.build_run_config
+
+      # Create display
+      @display = Display.new
+
+      # Create room
+      @room = Room.new(
+        display:    @display,
+        config:     @run_config,
+        scene_info: @scene_info
+      )
 
       debug_me("Director initialized") {
-        [@scene_info[:scene_name], @scene_info[:characters].join(", "), @character_dir]
+        [@scene_info[:scene_name], @scene_info[:characters]&.join(", "), @character_dir]
       }
     end
 
-    # Start the scene with all actors
+    # Start the scene with all actors.
     def action!
-      puts <<~HEADER
-
-        #{"=" * 60}
-        SCENE #{@scene_info[:scene_number]}: #{@scene_info[:scene_name]}
-        Location: #{@scene_info[:location]}
-        Characters: #{@scene_info[:characters].join(", ")}
-        #{"=" * 60}
-
-      HEADER
-
+      @display.scene_header(@scene_info)
       @running = true
 
-      create_actors
-      subscribe_to_scene
-      initiate_scene
+      load_actors
+      seed_scene
+      @room.wait_for_completion(timeout: scene_timeout, max_lines: @max_lines)
 
-      monitor_scene
+      # Collect transcript from shared memory
+      @transcript = @room.assemble_transcript
 
-      stop_actors
+      shutdown_actors
     end
 
-    # Stop the scene and all actors
+    # Stop the scene and all actors.
     def cut!
       @running = false
-      puts "\n[DIRECTOR: CUT! Scene ended.]"
+      @display.director_note("CUT! Scene ended.")
+      shutdown_actors
     end
 
-    # Save the transcript to a file
+    # Save the transcript to a file.
     #
     # @param filename [String] Output filename
     def save_transcript(filename = nil)
@@ -77,38 +89,34 @@ module WritersRoom
         file.puts "\n" + "-" * 60 + "\n"
 
         @transcript.each do |entry|
-          case entry[:type]
-          when :dialog
-            file.puts "#{entry[:character]}: #{entry[:line]}"
-          when :stage_direction
-            file.puts "[#{entry[:character].upcase} #{entry[:action]}]"
-          when :beat
-            file.puts "\n--- #{entry[:content]} ---\n"
-          end
+          emotion_tag = entry[:emotion] ? " [#{entry[:emotion]}]" : ""
+          file.puts "#{entry[:from]}#{emotion_tag}: #{entry[:content]}"
         end
       end
 
-      puts "Transcript saved to: #{filename}"
+      @display.info("Transcript saved to: #{filename}")
       filename
     end
 
-    # Get scene statistics
+    # Get scene statistics.
     def statistics
-      total_lines = @transcript.count { |e| e[:type] == :dialog }
+      total_lines = @transcript.length
       lines_by_character = @transcript
-        .select { |e| e[:type] == :dialog }
-        .group_by { |e| e[:character] }
+        .group_by { |e| e[:from] }
         .transform_values(&:count)
 
       {
         total_lines: total_lines,
         lines_by_character: lines_by_character,
-        duration: @transcript.last&.dig(:timestamp).to_i - @transcript.first&.dig(:timestamp).to_i,
         scene: @scene_info[:scene_number],
       }
     end
 
     private
+
+    def scene_timeout
+      WritersRoom.config.scene.timeout rescue 300
+    end
 
     def detect_character_dir(scene_file)
       scene_path = File.expand_path(scene_file)
@@ -134,114 +142,93 @@ module WritersRoom
       "characters"
     end
 
+    # Load scene file (.md with front matter preferred, .yml fallback).
     def load_scene
       unless File.exist?(@scene_file)
         raise "Scene file not found: #{@scene_file}"
       end
 
-      scene = YAML.load_file(@scene_file)
-      scene.transform_keys(&:to_sym)
+      if @scene_file.end_with?(".md")
+        parsed = FrontMatter.load_file(@scene_file)
+        # Merge body into scene_info as :context
+        scene = parsed[:metadata]
+        scene[:body] = parsed[:body]
+        scene
+      else
+        scene = YAML.load_file(@scene_file)
+        scene.transform_keys(&:to_sym)
+      end
     end
 
-    def create_actors
-      puts "\n[DIRECTOR: Calling actors to the stage...]\n"
+    # Load actors from character files into the Room.
+    def load_actors
+      @display.director_note("Calling actors to the stage...")
 
-      @bus.add_channel(:scene)
+      characters = @scene_info[:characters] || []
+      characters.each do |character_name|
+        character_info = load_character(character_name)
 
-      @scene_info[:characters].each do |character_name|
-        character_file = File.join(@character_dir, "#{character_name.downcase}.yml")
-
-        unless File.exist?(character_file)
-          puts "Warning: Character file not found: #{character_file}"
+        unless character_info
+          @display.info("  Warning: Character file not found for: #{character_name}")
           next
         end
 
-        puts "  - #{character_name} is taking their position..."
-
-        character_data = YAML.load_file(character_file)
-        character_info = character_data.transform_keys(&:to_sym)
-
-        actor = Actor.new(
-          character_info: character_info,
-          scene_info: @scene_info,
-          bus: @bus
-        )
-
-        @actors << actor
+        @display.info("  - #{character_name} is taking their position...")
+        @room.add_actor(character_name, character_info: character_info)
       end
 
-      puts "\n[DIRECTOR: All actors ready!]\n"
+      @display.director_note("All actors ready!")
     end
 
-    def stop_actors
-      puts "\n[DIRECTOR: Dismissing actors...]\n"
+    # Load a character file (.md preferred, .yml fallback).
+    def load_character(character_name)
+      slug = character_name.downcase.gsub(/\s+/, "_")
 
-      @actors.each do |actor|
-        actor.disconnect
-        puts "  - #{actor.character_name} has left the stage"
+      # Try .md first
+      md_file = File.join(@character_dir, "#{slug}.md")
+      if File.exist?(md_file)
+        parsed = FrontMatter.load_file(md_file)
+        info = parsed[:metadata]
+        info[:body] = parsed[:body]
+        return info
       end
 
-      @bus.close_all
-      @actors.clear
-    end
-
-    def subscribe_to_scene
-      @bus.subscribe(:scene) do |delivery|
-        message = delivery.message
-        msg_content = message.respond_to?(:content) ? message.content : message
-
-        msg_content = msg_content.transform_keys(&:to_sym) if msg_content.is_a?(Hash)
-
-        if msg_content.is_a?(Hash) && msg_content[:from]
-          @transcript << {
-            type: :dialog,
-            character: msg_content[:from],
-            line: msg_content[:content],
-            timestamp: Time.now.to_i,
-            emotion: msg_content[:emotion],
-          }
-
-          emotion_tag = msg_content[:emotion] ? " [#{msg_content[:emotion]}]" : ""
-          puts "#{msg_content[:from]}#{emotion_tag}: #{msg_content[:content]}"
-        end
-
-        delivery.ack!
+      # Fall back to .yml
+      yml_file = File.join(@character_dir, "#{slug}.yml")
+      if File.exist?(yml_file)
+        data = YAML.load_file(yml_file)
+        return data.transform_keys(&:to_sym)
       end
+
+      nil
     end
 
-    def initiate_scene
-      return if @actors.empty?
+    # Seed the scene with the opening context.
+    def seed_scene
+      @display.director_note("SCENE BEGINS")
 
-      first_actor = @actors.first
-      debug_me("Initiating scene with #{first_actor.character_name}")
-
-      dialog = first_actor.generate_dialog
-      first_actor.speak(dialog)
+      opening = build_opening_prompt
+      @room.seed(opening)
     end
 
-    def monitor_scene
-      puts "\n[SCENE BEGINS]\n\n"
+    # Build the opening prompt from scene info.
+    def build_opening_prompt
+      context = @scene_info[:body] || ""
+      characters = Array(@scene_info[:characters]).join(", ")
 
-      timeout = WritersRoom.config.scene.timeout rescue 300
-      start_time = Time.now
+      <<~PROMPT
+        [DIRECTOR] Scene #{@scene_info[:scene_number]}: #{@scene_info[:scene_name]}
+        Location: #{@scene_info[:location]}
+        Characters present: #{characters}
 
-      while @running
-        line_count = @transcript.count { |e| e[:type] == :dialog }
+        #{context}
 
-        if line_count >= @max_lines
-          puts "\n[DIRECTOR: Maximum lines reached]"
-          cut!
-          break
-        end
+        The scene begins now. Stay in character and use the speak tool to deliver your dialog.
+      PROMPT
+    end
 
-        if (Time.now - start_time) > timeout
-          puts "\n[DIRECTOR: Scene timeout reached]"
-          cut!
-          break
-        end
-
-        sleep 0.5
-      end
+    def shutdown_actors
+      @room&.shutdown
     end
   end
 end

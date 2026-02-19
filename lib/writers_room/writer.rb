@@ -8,7 +8,10 @@ require "fileutils"
 
 module WritersRoom
   # Writer helps develop the story: expands concepts, develops characters,
-  # creates story arcs, and breaks down scenes
+  # creates story arcs, and breaks down scenes.
+  #
+  # Uses RobotLab template switching: each method updates the robot's
+  # template + context before running, rather than inlining prompts.
   class Writer
     attr_reader :project_path, :metadata, :robot
 
@@ -16,7 +19,8 @@ module WritersRoom
       @project_path = File.expand_path(project_path)
 
       unless File.exist?(File.join(@project_path, "config.yml")) ||
-             File.exist?(File.join(@project_path, "project.yml"))
+             File.exist?(File.join(@project_path, "project.yml")) ||
+             File.exist?(File.join(@project_path, "project.md"))
         raise Error, "No project found. Run 'wr init <project_name>' first."
       end
 
@@ -39,30 +43,12 @@ module WritersRoom
         return chat_result if chat_result
       end
 
-      @robot.update(system_prompt: <<~SYSTEM)
-        You are an experienced story developer helping to expand a project concept.
-        Your job is to take a brief concept and develop it into a richer, more detailed description
-        that provides direction for writers, characters, and scenes.
+      @robot.update(
+        template: :develop_concept,
+        context: { concept: current_concept }
+      )
 
-        Focus on:
-        - Core themes and tone
-        - The world/setting
-        - Central conflict or dramatic question
-        - Potential character types
-        - Story structure possibilities
-
-        Keep it concise but evocative (3-5 paragraphs).
-      SYSTEM
-
-      result = @robot.run(<<~USER)
-        Here is the current concept:
-
-        #{current_concept}
-
-        Please develop this into a fuller, more detailed project description that will guide
-        the creative team.
-      USER
-
+      result = @robot.run("Develop this concept into a fuller project description.")
       developed_concept = result.reply
 
       notes_path = File.join(@project_path, "concept_development.md")
@@ -97,34 +83,17 @@ module WritersRoom
         return chat_result if chat_result
       end
 
-      @robot.update(system_prompt: <<~SYSTEM)
-        You are a character development expert helping to create rich, three-dimensional characters.
-        Given a character name and basic information, develop a detailed character profile.
+      @robot.update(
+        template: :develop_character,
+        context: {
+          project_concept: @metadata.concept,
+          character_name: name,
+          personality: personality,
+          background: background
+        }
+      )
 
-        Include:
-        - Detailed personality traits and quirks
-        - Background and history
-        - Motivations and fears
-        - Speaking style and mannerisms
-        - Internal conflicts
-        - Potential character arc
-        - Relationships with other characters (general types)
-
-        Format the response as a structured character profile.
-      SYSTEM
-
-      result = @robot.run(<<~USER)
-        Project Concept:
-        #{@metadata.concept}
-
-        Character to develop:
-        Name: #{name}
-        Basic Personality: #{personality}
-        Background Notes: #{background}
-
-        Please create a detailed character profile for #{name}.
-      USER
-
+      result = @robot.run("Create a detailed character profile for #{name}.")
       character_profile = result.reply
 
       dev_path = File.join(@project_path, "characters", "#{sanitize_filename(name)}_development.md")
@@ -156,32 +125,16 @@ module WritersRoom
         return chat_result if chat_result
       end
 
-      @robot.update(system_prompt: <<~SYSTEM)
-        You are a story structure expert helping to develop narrative arcs.
-        Given an arc name and description, create a detailed arc outline.
+      @robot.update(
+        template: :create_arc,
+        context: {
+          project_concept: @metadata.concept,
+          arc_name: arc_name,
+          arc_description: description
+        }
+      )
 
-        Include:
-        - Arc overview and purpose
-        - Beginning state
-        - Key events and turning points
-        - Character development within this arc
-        - Ending state
-        - Thematic elements
-
-        Keep it structured and clear for writers to use.
-      SYSTEM
-
-      result = @robot.run(<<~USER)
-        Project Concept:
-        #{@metadata.concept}
-
-        Arc to develop:
-        Name: #{arc_name}
-        Description: #{description}
-
-        Please create a detailed arc outline for "#{arc_name}".
-      USER
-
+      result = @robot.run("Create a detailed arc outline for \"#{arc_name}\".")
       arc_outline = result.reply
 
       arc_data = {
@@ -231,35 +184,18 @@ module WritersRoom
         return chat_result if chat_result
       end
 
-      @robot.update(system_prompt: <<~SYSTEM)
-        You are a scene breakdown expert helping to structure narrative arcs into scenes.
-        Given an arc outline, break it down into specific scenes.
+      @robot.update(
+        template: :breakdown_scenes,
+        context: {
+          project_concept: @metadata.concept,
+          arc_name: arc_name,
+          arc_description: arc["description"],
+          arc_outline: arc["outline"],
+          num_scenes: num_scenes
+        }
+      )
 
-        For each scene provide:
-        - Scene name/number
-        - Location/setting
-        - Characters involved
-        - What happens (brief summary)
-        - Dramatic purpose/objective
-        - Emotional tone
-
-        Format as a numbered list of scenes.
-      SYSTEM
-
-      result = @robot.run(<<~USER)
-        Project Concept:
-        #{@metadata.concept}
-
-        Arc to break down:
-        Name: #{arc_name}
-        Description: #{arc["description"]}
-
-        Arc Outline:
-        #{arc["outline"]}
-
-        Please break this arc down into #{num_scenes} scenes.
-      USER
-
+      result = @robot.run("Break this arc down into #{num_scenes} scenes.")
       scene_breakdown = result.reply
 
       breakdown_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_breakdown.md")
@@ -384,32 +320,16 @@ module WritersRoom
     end
 
     def setup_robot
-      config = WritersRoom.config
-      provider = config.provider
-      model = config.model_name
-
-      configure_ruby_llm(provider)
+      run_config = LLMSetup.build_run_config
 
       @robot = RobotLab.build(
         name: "writer",
-        model: model,
+        config: run_config,
         system_prompt: "You are a creative writing assistant."
       )
 
       debug_me("Robot setup complete for Writer") do
-        [provider, model]
-      end
-    end
-
-    def configure_ruby_llm(provider)
-      RubyLLM.configure do |c|
-        if provider == "ollama"
-          c.ollama_api_base = WritersRoom.config.ollama_url
-        elsif provider == "openai"
-          c.openai_api_key = ENV["OPENAI_API_KEY"]
-        elsif provider == "anthropic"
-          c.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
-        end
+        [WritersRoom.config.provider, WritersRoom.config.model_name]
       end
     end
 
