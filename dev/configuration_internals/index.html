@@ -698,6 +698,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration Internals
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -714,6 +732,99 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Class
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#llmsetup-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLMSetup Module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLMSetup Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure_ruby_llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        configure_ruby_llm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_run_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_run_config
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variable-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variable Mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reset
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -776,6 +887,86 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Class
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#llmsetup-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLMSetup Module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLMSetup Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure_ruby_llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        configure_ruby_llm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_run_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_run_config
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment-variable-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment Variable Mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reset
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -857,7 +1048,73 @@
 
 
 <h1 id="configuration-internals">Configuration Internals<a class="headerlink" href="#configuration-internals" title="Permanent link">&para;</a></h1>
-<p>TODO: Document MywayConfig::Base subclass, defaults.yml structure, environment variable mapping, and per-environment overrides.</p>
+<h2 id="config-class">Config Class<a class="headerlink" href="#config-class" title="Permanent link">&para;</a></h2>
+<p><code>WritersRoom::Config</code> provides the resolved configuration for the current project. Settings cascade:</p>
+<ol>
+<li>Built-in defaults (in <code>lib/writers_room/config/defaults.yml</code>)</li>
+<li>Per-project <code>config.yml</code></li>
+<li>Environment variables (prefixed with <code>WRITERS_ROOM_</code>)</li>
+</ol>
+<p>Access via <code>WritersRoom.config</code>:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">provider</span><span class="w">    </span><span class="c1"># =&gt; &quot;ollama&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="w">  </span><span class="c1"># =&gt; &quot;gpt-oss:20b&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ollama_url</span><span class="w">  </span><span class="c1"># =&gt; &quot;http://localhost:11434&quot;</span>
+</span></code></pre></div>
+<h2 id="llmsetup-module">LLMSetup Module<a class="headerlink" href="#llmsetup-module" title="Permanent link">&para;</a></h2>
+<p><code>WritersRoom::LLMSetup</code> centralizes LLM provider configuration. It eliminates duplication that previously existed between Writer and ChatSession.</p>
+<h3 id="configure_ruby_llm">configure_ruby_llm<a class="headerlink" href="#configure_ruby_llm" title="Permanent link">&para;</a></h3>
+<p>Sets up the RubyLLM gem for the configured provider:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="no">WritersRoom</span><span class="o">::</span><span class="no">LLMSetup</span><span class="o">.</span><span class="n">configure_ruby_llm</span><span class="p">(</span><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This configures API keys, base URLs, and provider-specific settings based on the config's <code>provider</code> field.</p>
+<h3 id="build_run_config">build_run_config<a class="headerlink" href="#build_run_config" title="Permanent link">&para;</a></h3>
+<p>Returns a <code>RobotLab::RunConfig</code> that can be passed to robots:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">run_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">WritersRoom</span><span class="o">::</span><span class="no">LLMSetup</span><span class="o">.</span><span class="n">build_run_config</span><span class="p">(</span><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># =&gt; RobotLab::RunConfig with model, temperature, etc.</span>
+</span></code></pre></div>
+<p>The RunConfig is used by Actor (via Room), Writer, and ChatSession to ensure consistent LLM settings across the application.</p>
+<h2 id="environment-variable-mapping">Environment Variable Mapping<a class="headerlink" href="#environment-variable-mapping" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Config Method</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WRITERS_ROOM_PROVIDER</code></td>
+<td><code>provider</code></td>
+<td><code>ollama</code></td>
+</tr>
+<tr>
+<td><code>WRITERS_ROOM_MODEL_NAME</code></td>
+<td><code>model_name</code></td>
+<td><code>gpt-oss:20b</code></td>
+</tr>
+<tr>
+<td><code>WRITERS_ROOM_OLLAMA_URL</code></td>
+<td><code>ollama_url</code></td>
+<td><code>http://localhost:11434</code></td>
+</tr>
+<tr>
+<td><code>WRITERS_ROOM_SCENE_MAX_LINES</code></td>
+<td><code>scene_max_lines</code></td>
+<td><code>50</code></td>
+</tr>
+<tr>
+<td><code>WRITERS_ROOM_SCENE_TIMEOUT</code></td>
+<td><code>scene_timeout</code></td>
+<td><code>300</code></td>
+</tr>
+</tbody>
+</table>
+<p>Provider-specific API keys (<code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>) are read directly by RubyLLM.</p>
+<h2 id="reset">Reset<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h2>
+<p>For testing, reset the cached config:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">reset_config!</span>
+</span></code></pre></div>
 
 
 

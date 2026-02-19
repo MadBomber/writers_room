@@ -724,6 +724,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extending WritersRoom
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -740,6 +758,82 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-cli-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New CLI Command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Tool
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-prompt-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Prompt Template
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supporting-a-new-llm-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supporting a New LLM Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-file-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New File Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -774,6 +868,69 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-cli-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New CLI Command
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-tool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Tool
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-prompt-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Prompt Template
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supporting-a-new-llm-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supporting a New LLM Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-file-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New File Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -855,7 +1012,85 @@
 
 
 <h1 id="extending-writersroom">Extending WritersRoom<a class="headerlink" href="#extending-writersroom" title="Permanent link">&para;</a></h1>
-<p>TODO: Document how to add new CLI commands, support new LLM providers, create custom payload types, and extend the Writer tools.</p>
+<h2 id="adding-a-new-cli-command">Adding a New CLI Command<a class="headerlink" href="#adding-a-new-cli-command" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Create a Thor subclass in <code>lib/writers_room/cli/</code>:</li>
+</ol>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">module</span><span class="w"> </span><span class="nn">WritersRoom</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="k">module</span><span class="w"> </span><span class="nn">Commands</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">MyCommand</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">Thor</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="n">desc</span><span class="w"> </span><span class="s2">&quot;my_action&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Description&quot;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="k">def</span><span class="w"> </span><span class="nf">my_action</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="c1"># implementation</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="k">end</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="k">end</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">end</span>
+</span></code></pre></div>
+<ol>
+<li>Register it in <code>lib/writers_room/cli.rb</code> as a subcommand.</li>
+<li>Add help text in <code>lib/writers_room/help_formatter.rb</code>.</li>
+</ol>
+<h2 id="adding-a-new-tool">Adding a New Tool<a class="headerlink" href="#adding-a-new-tool" title="Permanent link">&para;</a></h2>
+<p>Tools give actors agency during scene direction. Create a <code>RobotLab::Tool</code> subclass in <code>lib/writers_room/tools/</code>:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">module</span><span class="w"> </span><span class="nn">WritersRoom</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">MyTool</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">RobotLab</span><span class="o">::</span><span class="no">Tool</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="s2">&quot;What this tool does&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">param</span><span class="w"> </span><span class="ss">:input</span><span class="p">,</span><span class="w"> </span><span class="ss">desc</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Parameter description&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">required</span><span class="p">:</span><span class="w"> </span><span class="kp">true</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="ss">input</span><span class="p">:)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="c1"># Access the owning robot via `robot`</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="c1"># Access shared memory via `robot.shared_memory`</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="s2">&quot;Result string returned to the LLM&quot;</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="k">end</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="k">end</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="k">end</span>
+</span></code></pre></div>
+<p>Zeitwerk collapses the <code>tools/</code> directory, so the class lives in the <code>WritersRoom</code> namespace directly (e.g., <code>WritersRoom::MyTool</code>).</p>
+<p>To make the tool available to actors, add it to the <code>local_tools:</code> array in <code>Actor#initialize</code> or <code>Room#add_actor</code>.</p>
+<h2 id="adding-a-new-prompt-template">Adding a New Prompt Template<a class="headerlink" href="#adding-a-new-prompt-template" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Create a Markdown file in <code>lib/writers_room/prompts/</code>:</li>
+</ol>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>---
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>description: What this template does
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>parameters:
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>name
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="gu">  - context</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="gu">---</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>You are a &lt;%= name %&gt;.
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>&lt;%= context %&gt;
+</span></code></pre></div>
+<ol>
+<li>Reference it by symbol name (filename without extension) in robot setup:</li>
+</ol>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">robot</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="ss">template</span><span class="p">:</span><span class="w"> </span><span class="ss">:my_template</span><span class="p">,</span><span class="w"> </span><span class="ss">context</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">context</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="w"> </span><span class="p">})</span>
+</span></code></pre></div>
+<h2 id="supporting-a-new-llm-provider">Supporting a New LLM Provider<a class="headerlink" href="#supporting-a-new-llm-provider" title="Permanent link">&para;</a></h2>
+<p>RubyLLM handles provider abstraction. To add a new provider:</p>
+<ol>
+<li>Ensure RubyLLM supports the provider (or contribute support upstream)</li>
+<li>Add the provider configuration in <code>LLMSetup.configure_ruby_llm</code></li>
+<li>Document the required environment variables in <code>docs/user/configuration.md</code></li>
+</ol>
+<h2 id="adding-a-new-file-format">Adding a New File Format<a class="headerlink" href="#adding-a-new-file-format" title="Permanent link">&para;</a></h2>
+<p>WritersRoom uses Markdown with YAML front matter for all project files. The <code>FrontMatter</code> module handles parsing and generation:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Reading</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">parsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">WritersRoom</span><span class="o">::</span><span class="no">FrontMatter</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s2">&quot;path/to/file.md&quot;</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parsed</span><span class="o">[</span><span class="ss">:metadata</span><span class="o">]</span><span class="w">  </span><span class="c1"># Hash from YAML front matter</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parsed</span><span class="o">[</span><span class="ss">:body</span><span class="o">]</span><span class="w">           </span><span class="c1"># String content after front matter</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Writing</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">WritersRoom</span><span class="o">::</span><span class="no">FrontMatter</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nb">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">role</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;protagonist&quot;</span><span class="w"> </span><span class="p">},</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="s2">&quot;Character description here...&quot;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="no">File</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;characters/alice.md&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">content</span><span class="p">)</span>
+</span></code></pre></div>
+<p>All project files use <code>.md</code> with front matter exclusively.</p>
 
 
 
