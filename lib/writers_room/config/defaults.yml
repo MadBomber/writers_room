@@ -4,7 +4,7 @@ defaults:
   scene:
     max_lines: 50
     timeout: 300
-  ollama_url: "http://localhost:11434"
+  ollama_url: "http://localhost:11434/v1"
 
 development:
   provider: ollama

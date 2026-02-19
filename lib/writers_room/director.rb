@@ -6,9 +6,6 @@
 ##  By:   Dewayne VanHoozer (dvanhoozer@gmail.com)
 #
 
-require "debug_me"
-include DebugMe
-
 require "yaml"
 
 module WritersRoom
@@ -49,7 +46,6 @@ module WritersRoom
         scene_info: @scene_info
       )
 
-      debug_me "Director initialized: scene=#{@scene_info[:scene_name]} characters=#{@scene_info[:characters]&.join(', ')} char_dir=#{@character_dir}"
     end
 
     # Start the scene with all actors.
@@ -125,18 +121,15 @@ module WritersRoom
         character_dir = File.join("projects", project_name, "characters")
 
         if Dir.exist?(character_dir)
-          debug_me "Auto-detected character directory: #{character_dir}"
           return character_dir
         end
       end
 
       character_dir = File.join(scene_dir, "..", "characters")
       if Dir.exist?(character_dir)
-        debug_me "Found character directory relative to scene: #{character_dir}"
         return File.expand_path(character_dir)
       end
 
-      debug_me "Using default character directory: characters"
       "characters"
     end
 

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "debug_me"
-include DebugMe
-
 require "yaml"
 require "fileutils"
 
@@ -26,7 +23,6 @@ module WritersRoom
       @metadata = ProjectMetadata.new(@project_path)
       setup_robot
 
-      debug_me("Writer initialized for project") { @metadata.name }
     end
 
     # Develop the project concept into a fuller description using LLM
@@ -62,8 +58,6 @@ module WritersRoom
 
         *Generated: #{Time.now}*
       MARKDOWN
-
-      debug_me("Concept developed") { notes_path }
 
       {
         original: current_concept,
@@ -107,8 +101,6 @@ module WritersRoom
         *Generated: #{Time.now}*
         *Based on: #{personality}*
       MARKDOWN
-
-      debug_me("Character developed") { [name, dev_path] }
 
       {
         name: name,
@@ -161,8 +153,6 @@ module WritersRoom
         *Created: #{Time.now}*
       MARKDOWN
 
-      debug_me("Arc created") { [arc_name, arc_path] }
-
       {
         name: arc_name,
         outline: arc_outline,
@@ -208,8 +198,6 @@ module WritersRoom
         *Generated: #{Time.now}*
         *Scenes requested: #{num_scenes}*
       MARKDOWN
-
-      debug_me("Scenes broken down") { [arc_name, breakdown_path] }
 
       {
         arc: arc_name,
@@ -327,9 +315,6 @@ module WritersRoom
         system_prompt: "You are a creative writing assistant."
       )
 
-      debug_me("Robot setup complete for Writer") do
-        [WritersRoom.config.provider, WritersRoom.config.model_name]
-      end
     end
 
     def sanitize_filename(name)

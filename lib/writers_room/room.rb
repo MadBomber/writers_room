@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "debug_me"
-include DebugMe
 
 module WritersRoom
   # Scene container that holds the bus, shared memory, and actor roster.
@@ -25,8 +23,6 @@ module WritersRoom
 
       # Shared broadcast channel for the scene
       @bus.add_channel(:scene)
-
-      debug_me("Room initialized for scene") { scene_info[:scene_name] }
     end
 
     # Add an actor to the room.
@@ -45,8 +41,6 @@ module WritersRoom
         config:         @config
       )
       @actors[name] = actor
-
-      debug_me("Actor added to room") { name }
       actor
     end
 
@@ -57,7 +51,6 @@ module WritersRoom
       first = @actors.values.first
       return unless first
 
-      debug_me("Seeding scene via") { first.name }
       first.send_message(to: :scene, content: opening_prompt)
     end
 

@@ -23,6 +23,33 @@ module WritersRoom
           c.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
         end
       end
+
+      register_local_model(config.model_name, provider)
+    end
+
+    # Pre-register a model in the RubyLLM registry for local providers.
+    #
+    # RobotLab's RunConfig doesn't carry a provider field, so when
+    # RubyLLM::Chat resolves the model it searches the static registry
+    # without knowing which provider to use. Local providers (Ollama,
+    # GPUStack) aren't in the static registry, causing "Unknown model"
+    # errors. This method registers the model so resolution succeeds.
+    #
+    # @param model_name [String] the model identifier
+    # @param provider [String] the provider name
+    def register_local_model(model_name, provider)
+      provider_sym = provider.to_sym
+      provider_class = RubyLLM::Provider.providers[provider_sym]
+      return unless provider_class
+
+      provider_instance = provider_class.new(RubyLLM.config)
+      return unless provider_instance.local?
+
+      # Skip if already registered
+      return if RubyLLM::Models.all.any? { |m| m.id == model_name && m.provider == provider }
+
+      default_info = RubyLLM::Model::Info.default(model_name, provider_instance.slug)
+      RubyLLM::Models.instance.all << default_info
     end
 
     # Build a RobotLab::RunConfig from WritersRoom config.

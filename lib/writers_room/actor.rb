@@ -6,9 +6,6 @@
 ##  By:   Dewayne VanHoozer (dvanhoozer@gmail.com)
 #
 
-require "debug_me"
-include DebugMe
-
 module WritersRoom
   # AI-powered Actor that uses RobotLab's template system, tools, and
   # bus messaging to participate in multi-character scenes.
@@ -57,8 +54,6 @@ module WritersRoom
       )
 
       setup_message_handler
-
-      debug_me("Actor initialized with template + tools") { @character_name }
     end
 
     private
@@ -161,10 +156,9 @@ module WritersRoom
         prompt = build_turn_prompt(message)
 
         begin
-          result = run(prompt)
-          debug_me("#{name} processed message ##{@messages_processed}")
+          run(prompt)
         rescue => e
-          debug_me("#{name} error processing message: #{e.message}")
+          @display&.info("#{name} error processing message: #{e.message}")
         end
       end
     end

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "debug_me"
-include DebugMe
 
 require "io/console"
 
@@ -18,8 +16,6 @@ module WritersRoom
       @template = template
       @messages = []
       setup_robot
-
-      debug_me("ChatSession initialized") { context.keys }
     end
 
     # Start an interactive chat session
@@ -112,10 +108,6 @@ module WritersRoom
           system_prompt: build_system_prompt,
           config: run_config
         )
-      end
-
-      debug_me("Robot setup complete for ChatSession") do
-        [WritersRoom.config.provider, WritersRoom.config.model_name]
       end
     end
 
