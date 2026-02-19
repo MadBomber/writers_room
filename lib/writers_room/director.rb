@@ -55,6 +55,12 @@ module WritersRoom
       @running = true
 
       load_actors
+
+      if @room.actors.empty?
+        @display.director_note("No actors could be loaded. Cannot direct scene.")
+        return
+      end
+
       seed_scene
       @room.wait_for_completion(timeout: scene_timeout, max_lines: @max_lines)
 
@@ -171,12 +177,26 @@ module WritersRoom
     end
 
     # Load a character file (.md with front matter).
+    # Tries exact slug match first (e.g. "Chef Marco" → "chef_marco.md"),
+    # then falls back to finding any .md file whose name contains the slug
+    # (e.g. "Marco" → matches "chef_marco.md").
     def load_character(character_name)
       slug = character_name.downcase.gsub(/\s+/, "_")
       md_file = File.join(@character_dir, "#{slug}.md")
 
-      return nil unless File.exist?(md_file)
+      # Exact match
+      return parse_character_file(md_file) if File.exist?(md_file)
 
+      # Fallback: search for files containing the slug in their name
+      pattern = File.join(@character_dir, "*.md")
+      match = Dir.glob(pattern).find { |f| File.basename(f, ".md").include?(slug) }
+
+      return parse_character_file(match) if match
+
+      nil
+    end
+
+    def parse_character_file(md_file)
       parsed = FrontMatter.load_file(md_file)
       info = parsed[:metadata]
       info[:body] = parsed[:body]
