@@ -37,7 +37,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "debug_me", ">= 1.0"
   spec.add_dependency "robot_lab", ">= 0.0.7"
   spec.add_dependency "myway_config", "~> 0.1"
-  spec.add_dependency "ratatui_ruby", "~> 1.4"
+  # ratatui_ruby kept as dev dependency for MarkdownRenderer (future TUI use)
+  spec.add_development_dependency "ratatui_ruby", "~> 1.4"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

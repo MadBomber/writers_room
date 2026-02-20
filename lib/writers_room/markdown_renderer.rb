@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "strscan"
+require "ratatui_ruby"
 
 module WritersRoom
   # Converts markdown strings to arrays of RatatuiRuby::Text::Line with styled spans.

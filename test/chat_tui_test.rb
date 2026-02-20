@@ -74,6 +74,30 @@ class ChatTuiTest < Minitest::Test
     assert_equal :auto_save, result[:async]
   end
 
+  def test_handle_save_all
+    result = @session.handle_command("save all")
+    assert result[:handled]
+    assert_equal :auto_save, result[:async]
+  end
+
+  def test_handle_save_it
+    result = @session.handle_command("save it")
+    assert result[:handled]
+    assert_equal :save_last, result[:async]
+  end
+
+  def test_handle_save_that
+    result = @session.handle_command("save that")
+    assert result[:handled]
+    assert_equal :save_last, result[:async]
+  end
+
+  def test_handle_save_please
+    result = @session.handle_command("save please")
+    assert result[:handled]
+    assert_equal :save_last, result[:async]
+  end
+
   def test_handle_unknown_command
     result = @session.handle_command("tell me about dogs")
     refute result[:handled]
@@ -109,5 +133,54 @@ class ChatTuiTest < Minitest::Test
     text = @session.goodbye_text
     assert_includes text, "ended"
     assert_includes text, "0 exchanges"
+  end
+
+  # --- ANSI Rendering ---
+
+  def setup_tui
+    WritersRoom::ChatTui.new(@session)
+  end
+
+  def test_ansi_bold
+    tui = setup_tui
+    result = tui.send(:inline_ansi, "this is **bold** text")
+    assert_includes result, "\e[1m"   # bold on
+    assert_includes result, "bold"
+    assert_includes result, "\e[0m"   # reset
+  end
+
+  def test_ansi_italic
+    tui = setup_tui
+    result = tui.send(:inline_ansi, "this is *italic* text")
+    assert_includes result, "\e[3m"   # italic on
+    assert_includes result, "italic"
+  end
+
+  def test_ansi_inline_code
+    tui = setup_tui
+    result = tui.send(:inline_ansi, "run `bundle exec` now")
+    assert_includes result, "\e[92m"  # light_green
+    assert_includes result, "bundle exec"
+  end
+
+  def test_ansi_header_rendering
+    tui = setup_tui
+    result = tui.send(:render_ansi_line, "# Big Title")
+    assert_includes result, "\e[33m"  # yellow
+    assert_includes result, "\e[1m"   # bold
+    assert_includes result, "Big Title"
+  end
+
+  def test_ansi_code_block
+    tui = setup_tui
+    result = tui.send(:render_ansi, "```\nputs 'hi'\n```")
+    assert_includes result, "\e[92m"  # light_green
+    assert_includes result, "puts 'hi'"
+  end
+
+  def test_ansi_plain_text
+    tui = setup_tui
+    result = tui.send(:inline_ansi, "just plain text")
+    assert_equal "just plain text", result
   end
 end

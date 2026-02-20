@@ -96,7 +96,7 @@ module WritersRoom
 
         log_dir = File.join(project_path, "transcripts")
         FileUtils.mkdir_p(log_dir)
-        log_path = File.join(log_dir, "chat_#{Time.now.to_i}.md")
+        log_path = File.join(log_dir, "chat_#{Time.now.strftime('%Y%m%d%H%M%S')}.md")
         session.save(log_path)
       end
     end

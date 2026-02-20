@@ -8,6 +8,10 @@ module WritersRoom
   class ChatSession
     attr_reader :robot, :context, :messages, :logger, :project_path
 
+    # Context keys that contain large data structures meant for the LLM,
+    # not for display to the user or inclusion in saved transcripts.
+    CONTEXT_DISPLAY_SKIP = %i[additional existing_elements project_elements element_contents].freeze
+
     # @param context [Hash] conversation context (project info, task, etc.)
     # @param template [Symbol, nil] optional RobotLab template for the session
     # @param project_path [String, nil] path to the WritersRoom project for saving elements
@@ -25,7 +29,7 @@ module WritersRoom
       @logger.info("=" * 60)
       @logger.info("Session started")
       @context.each do |key, value|
-        next if key == :additional || key == :existing_elements
+        next if CONTEXT_DISPLAY_SKIP.include?(key)
         @logger.info("  #{key}: #{value}")
       end
       @logger.info("=" * 60)
@@ -70,7 +74,8 @@ module WritersRoom
       result.reply || "Unable to generate summary."
     end
 
-    # Save conversation to file
+    # Save conversation transcript to file.
+    # Does NOT call the LLM — exits instantly.
     def save(filepath)
       require "fileutils"
 
@@ -79,6 +84,7 @@ module WritersRoom
       content = "# Chat Session: #{Time.now}\n\n"
       content += "## Context\n\n"
       @context.each do |key, value|
+        next if CONTEXT_DISPLAY_SKIP.include?(key)
         content += "- **#{key}**: #{value}\n"
       end
       content += "\n## Conversation\n\n"
@@ -90,8 +96,6 @@ module WritersRoom
           content += "**Assistant**: #{msg[:content]}\n\n"
         end
       end
-
-      content += "\n## Summary\n\n#{summary}\n"
 
       File.write(filepath, content)
       filepath
@@ -108,13 +112,14 @@ module WritersRoom
     #   { handled: true, output: "...", clear_display: true }
     #   { handled: true, async: :summary }
     #   { handled: true, async: :save, args: [type, name] }
+    #   { handled: true, async: :save_last }
     #   { handled: true, async: :auto_save }
     #   { handled: false }
     def handle_command(input)
       stripped = input.strip
       lowered  = stripped.downcase
 
-      # Match save with args against original (preserves case in name)
+      # Match save with args: "save <type> <name>"
       if stripped =~ /\Asave\s+(\w+)\s+(.+)\z/i
         @logger.info("COMMAND: save #{$1} #{$2.strip}")
         return { handled: true, async: :save, args: [$1.downcase, $2.strip] }
@@ -134,9 +139,12 @@ module WritersRoom
         @logger.info("COMMAND: clear")
         @messages.clear
         { handled: true, output: "*Conversation cleared*", clear_display: true }
-      when "save"
+      when "save", "save all"
         @logger.info("COMMAND: save (auto-detect)")
         { handled: true, async: :auto_save }
+      when /\Asave(\s|$)/
+        @logger.info("COMMAND: save last")
+        { handled: true, async: :save_last }
       else
         { handled: false }
       end
@@ -147,21 +155,16 @@ module WritersRoom
       <<~HELP
         ## Commands
 
-        | Command | Description |
-        |---------|-------------|
-        | `save <type> <name>` | Save discussed content as an element |
-        | `save` | Auto-detect what was discussed and save it |
-        | `help` | Show this help |
-        | `context` | Show current context |
-        | `summary` | Get conversation summary |
-        | `clear` | Clear conversation history |
-        | `exit` | End chat session (also: `quit`, `q`, `bye`) |
+        - `save it` — save the last assistant response as a project element
+        - `save <type> <name>` — save discussed content as an element
+        - `save` / `save all` — auto-detect all elements and save them
+        - `help` — show this help
+        - `context` — show current context
+        - `summary` — get conversation summary
+        - `clear` — clear conversation history
+        - `exit` — end chat session (also: `quit`, `q`, `bye`)
 
-        **Examples:**
-        - `save character Alice`
-        - `save chapter The Beginning`
-
-        Otherwise, just type your message to chat with the LLM.
+        Just type your message to chat with the LLM.
       HELP
     end
 
@@ -171,7 +174,7 @@ module WritersRoom
 
       lines = ["## Context\n"]
       @context.each do |key, value|
-        next if key == :additional || key == :existing_elements
+        next if CONTEXT_DISPLAY_SKIP.include?(key)
         lines << "- **#{key}**: #{value}"
       end
       lines.join("\n")
@@ -200,6 +203,12 @@ module WritersRoom
       unless @project_path
         @logger.warn("Save failed: no project context")
         return ["**No project context** — cannot save elements."]
+      end
+
+      types = valid_element_types
+      unless types.key?(element_type)
+        @logger.warn("Save failed: unknown element type '#{element_type}'")
+        return ["**Unknown element type** `#{element_type}`. Valid types: #{types.keys.join(', ')}"]
       end
 
       if @messages.empty?
@@ -248,7 +257,10 @@ module WritersRoom
         return ["**Nothing discussed yet** — have a conversation first."]
       end
 
-      @logger.info("Auto-detecting elements to save")
+      types = valid_element_types
+      type_list = types.keys.join(", ")
+
+      @logger.info("Auto-detecting elements to save (valid types: #{type_list})")
       outputs << "*Analyzing conversation to determine what to save...*"
 
       detection_prompt = <<~PROMPT
@@ -257,11 +269,12 @@ module WritersRoom
         Respond with ONLY lines in this format, one per element. No other text:
         TYPE: NAME
 
-        Where TYPE is one of: character, chapter, scene, location, setting, arc, relationship, theme
+        Where TYPE is EXACTLY one of: #{type_list}
         And NAME is the element name.
 
         If we discussed multiple elements, list each on its own line.
         Only include elements where we developed meaningful content worth saving.
+        Do NOT use any type not in the list above.
       PROMPT
 
       result = @robot.run(detection_prompt)
@@ -269,7 +282,14 @@ module WritersRoom
 
       elements = reply.strip.lines.filter_map { |line|
         if line =~ /\A\s*(\w+):\s*(.+)/i
-          [$1.strip.downcase, $2.strip]
+          type = $1.strip.downcase
+          name = $2.strip
+          if types.key?(type)
+            [type, name]
+          else
+            @logger.warn("Auto-save: skipping unknown type '#{type}' for '#{name}'")
+            nil
+          end
         end
       }
 
@@ -291,6 +311,99 @@ module WritersRoom
       end
 
       outputs
+    end
+
+    # Save the last assistant response directly as a project element.
+    # Uses a quick LLM call to identify type and name, then writes the
+    # raw content — no re-extraction or summarization.
+    # Returns array of markdown output strings.
+    def execute_save_last
+      unless @project_path
+        @logger.warn("Save-last failed: no project context")
+        return ["**No project context** — cannot save elements."]
+      end
+
+      last_assistant = @messages.reverse.find { |m| m[:role] == "assistant" }
+      unless last_assistant
+        @logger.warn("Save-last failed: no assistant message")
+        return ["**Nothing to save** — no assistant response yet."]
+      end
+
+      types = valid_element_types
+      type_list = types.keys.join(", ")
+
+      @logger.info("Save-last: identifying element from last response")
+
+      id_prompt = <<~PROMPT
+        Look at the last thing you wrote in our conversation.
+        What single story element best describes it?
+
+        Respond with ONLY one line in this format, no other text:
+        TYPE: NAME
+
+        Where TYPE is EXACTLY one of: #{type_list}
+        And NAME is the element name (e.g. "Chapter 2" or "Mara Kode").
+        Do NOT use any type not in the list above.
+      PROMPT
+
+      result = @robot.run(id_prompt)
+      reply = result.reply || ""
+
+      match = reply.strip.match(/\A\s*(\w+):\s*(.+)/i)
+      unless match
+        @logger.warn("Save-last: could not identify element from LLM response: #{reply}")
+        return ["**Could not identify** what to save. Try: `save <type> <name>` (e.g. `save chapter Chapter 2`)"]
+      end
+
+      element_type = match[1].strip.downcase
+      name = match[2].strip
+
+      unless types.key?(element_type)
+        @logger.warn("Save-last: LLM returned invalid type '#{element_type}'")
+        return ["**Unknown element type** `#{element_type}`. Try: `save <type> <name>` where type is one of: #{type_list}"]
+      end
+
+      content = last_assistant[:content]
+
+      @logger.info("Save-last: saving #{element_type} '#{name}' (#{content.length} chars)")
+
+      dir = resolve_element_dir(element_type)
+      slug = Element.sanitize(name)
+      path = File.join(dir, "#{slug}.md")
+
+      metadata = { "name" => name, "status" => "draft" }
+      parsed = { name: name, previous_names: [], aliases: [], status: "draft", body: content }
+
+      old_path = find_existing_element(dir, parsed)
+
+      if old_path && old_path != path
+        el = Element.load(old_path)
+        el.metadata.merge!(FrontMatter.deep_symbolize_keys(metadata))
+        el.instance_variable_set(:@body, content)
+        el.instance_variable_set(:@path, path)
+        el.instance_variable_set(:@slug, slug)
+        el.save
+        File.delete(old_path)
+        @logger.info("Renamed #{element_type}: #{File.basename(old_path, '.md')} -> #{name} (#{path})")
+        ["**Saved** #{element_type}: #{name} (`#{path}`)"]
+      elsif File.exist?(path)
+        el = Element.load(path)
+        el.metadata.merge!(FrontMatter.deep_symbolize_keys(metadata))
+        el.instance_variable_set(:@body, content)
+        el.save
+        @logger.info("Updated #{element_type}: #{name} -> #{path}")
+        ["**Saved** #{element_type}: #{name} (`#{path}`)"]
+      else
+        require "fileutils"
+        FileUtils.mkdir_p(dir)
+        file_content = FrontMatter.dump(metadata, content)
+        File.write(path, file_content)
+        @logger.info("Created #{element_type}: #{name} -> #{path}")
+        ["**Saved** #{element_type}: #{name} (`#{path}`)"]
+      end
+    rescue StandardError => e
+      @logger.error("Error in save-last: #{e.message}")
+      ["**Error** saving: #{e.message}"]
     end
 
     # Execute summary. Returns markdown string.
@@ -485,28 +598,46 @@ module WritersRoom
       nil
     end
 
-    def resolve_element_dir(element_type)
+    # Build a map of valid singular element types to their directory names,
+    # derived from the medium config. Only these types can be saved.
+    def valid_element_types
+      types = {}
+
       begin
         metadata = ProjectMetadata.new(@project_path)
         medium = MediumRegistry.find(metadata.medium)
 
-        medium.specific_elements.each do |_key, config|
-          if config["singular"] == element_type || _key == element_type
-            return File.join(@project_path, config["dir"] || _key)
-          end
+        # From specific_elements (e.g. chapters: {dir: "chapters", singular: "chapter"})
+        medium.specific_elements.each do |key, config|
+          singular = config["singular"] || key.to_s.chomp("s")
+          dir = config["dir"] || key.to_s
+          types[singular] = dir
         end
 
-        plural = "#{element_type}s"
-        if medium.scaffolded_dirs.include?(plural)
-          return File.join(@project_path, plural)
+        # From scaffolded_dirs (e.g. "characters" → singular "character")
+        medium.scaffolded_dirs.each do |dir_name|
+          next if %w[transcripts drafts].include?(dir_name)
+          singular = dir_name.chomp("s")
+          types[singular] ||= dir_name
         end
       rescue StandardError
-        # Fall through
+        # No medium config available — no valid types
       end
 
-      plural = "#{element_type}s"
-      plural_path = File.join(@project_path, plural)
-      Dir.exist?(plural_path) ? plural_path : File.join(@project_path, element_type)
+      types
+    end
+
+    # Resolve element type to a project directory path.
+    # Only returns directories for types defined in the medium config.
+    def resolve_element_dir(element_type)
+      types = valid_element_types
+      dir_name = types[element_type]
+
+      unless dir_name
+        raise "Unknown element type '#{element_type}'. Valid types: #{types.keys.join(', ')}"
+      end
+
+      File.join(@project_path, dir_name)
     end
   end
 end
