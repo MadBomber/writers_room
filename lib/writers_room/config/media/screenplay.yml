@@ -1,0 +1,47 @@
+id: screenplay
+label: Screenplay
+universal_elements:
+  - story
+  - theme
+  - genre
+  - characters
+  - arcs
+  - conflict
+  - setting
+  - locations
+  - timeline
+specific_elements:
+  acts:
+    dir: acts
+    singular: act
+    plural: acts
+  sequences:
+    dir: sequences
+    singular: sequence
+    plural: sequences
+  scenes:
+    dir: scenes
+    singular: scene
+    plural: scenes
+scaffolded_dirs:
+  - characters
+  - arcs
+  - settings
+  - locations
+  - acts
+  - sequences
+  - scenes
+  - transcripts
+workflows:
+  - outlining
+  - treatment
+  - drafting
+  - revision
+  - polish
+statuses:
+  - outline
+  - treatment
+  - draft
+  - revision
+  - polish
+  - final

@@ -9,6 +9,8 @@ ENV["ROBOT_LAB_TEMPLATE_PATH"] ||= File.expand_path("writers_room/prompts", __di
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect("llm_setup" => "LLMSetup")
 loader.ignore("#{__dir__}/writers_room/config/")
+loader.ignore("#{__dir__}/writers_room/element_templates/")
+loader.ignore("#{__dir__}/writers_room/prompts/")
 loader.collapse("#{__dir__}/writers_room/tools")
 loader.setup
 

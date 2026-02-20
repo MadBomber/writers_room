@@ -1,0 +1,46 @@
+id: tv_series
+label: TV Series
+universal_elements:
+  - story
+  - theme
+  - genre
+  - characters
+  - arcs
+  - conflict
+  - setting
+  - locations
+  - timeline
+specific_elements:
+  seasons:
+    dir: seasons
+    singular: season
+    plural: seasons
+  episodes:
+    dir: episodes
+    singular: episode
+    plural: episodes
+  scenes:
+    dir: scenes
+    singular: scene
+    plural: scenes
+scaffolded_dirs:
+  - characters
+  - arcs
+  - settings
+  - locations
+  - seasons
+  - episodes
+  - scenes
+  - transcripts
+workflows:
+  - series_bible
+  - outlining
+  - drafting
+  - revision
+  - table_read
+  - production
+statuses:
+  - outline
+  - draft
+  - revision
+  - final

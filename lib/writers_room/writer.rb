@@ -308,13 +308,22 @@ module WritersRoom
 
     def setup_robot
       run_config = LLMSetup.build_run_config
+      tools = build_file_tools
 
       @robot = RobotLab.build(
         name: "writer",
         config: run_config,
-        system_prompt: "You are a creative writing assistant."
+        system_prompt: "You are a creative writing assistant.",
+        local_tools: tools
       )
+    end
 
+    def build_file_tools
+      [
+        ReadFileTool.new(project_path: @project_path),
+        WriteFileTool.new(project_path: @project_path),
+        ListDirectoryTool.new(project_path: @project_path)
+      ]
     end
 
     def sanitize_filename(name)

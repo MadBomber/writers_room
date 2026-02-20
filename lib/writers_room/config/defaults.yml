@@ -1,6 +1,7 @@
 defaults:
   provider: ollama
   model_name: "gpt-oss:20b"
+  default_medium: dialog
   scene:
     max_lines: 50
     timeout: 300

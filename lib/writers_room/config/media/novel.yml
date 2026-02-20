@@ -1,0 +1,56 @@
+id: novel
+label: Novel
+universal_elements:
+  - story
+  - theme
+  - genre
+  - target_audience
+  - tone_mood
+  - characters
+  - relationships
+  - arcs
+  - conflict
+  - setting
+  - locations
+  - timeline
+  - backstory
+  - point_of_view
+  - research
+  - story_bible
+specific_elements:
+  chapters:
+    dir: chapters
+    singular: chapter
+    plural: chapters
+  parts:
+    dir: parts
+    singular: part
+    plural: parts
+  prologue:
+    dir: chapters
+    singular: prologue
+  epilogue:
+    dir: chapters
+    singular: epilogue
+scaffolded_dirs:
+  - characters
+  - relationships
+  - arcs
+  - settings
+  - locations
+  - research
+  - timeline
+  - backstory
+  - chapters
+  - parts
+  - transcripts
+workflows:
+  - outlining
+  - drafting
+  - revision
+  - final
+statuses:
+  - outline
+  - draft
+  - revision
+  - final

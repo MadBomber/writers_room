@@ -22,7 +22,7 @@ module WritersRoom
     end
 
     # Create a new project with concept
-    def self.create_project(project_path, name:, concept: "", **config_options)
+    def self.create_project(project_path, name:, concept: "", medium: "dialog", **config_options)
       FileUtils.mkdir_p(project_path)
 
       # Write config.yml if it doesn't already exist
@@ -35,10 +35,10 @@ module WritersRoom
         File.write(config_path, YAML.dump(config_data))
       end
 
-      # Create metadata with concept (saves as .md)
-      ProjectMetadata.create(project_path, name: name, concept: concept)
+      # Create metadata with concept and medium (saves as .md)
+      ProjectMetadata.create(project_path, name: name, concept: concept, medium: medium)
 
-      # Create required directories
+      # Create required directories based on medium
       producer = new(project_path)
       producer.send(:ensure_project_structure)
       producer
@@ -46,7 +46,7 @@ module WritersRoom
 
     # Validate that the project has the required structure
     def validate_project
-      required_dirs = %w[characters scenes transcripts arcs]
+      required_dirs = scaffolded_dirs_for_medium
       missing = required_dirs.reject { |dir| Dir.exist?(File.join(@project_path, dir)) }
 
       if missing.any?
@@ -255,11 +255,20 @@ module WritersRoom
     private
 
     def ensure_project_structure
-      required_dirs = %w[characters scenes transcripts arcs]
-      required_dirs.each do |dir|
-        dir_path = File.join(@project_path, dir)
-        FileUtils.mkdir_p(dir_path) unless Dir.exist?(dir_path)
-      end
+      scaffolder = ProjectScaffolder.new(@project_path, medium_id: current_medium_id)
+      scaffolder.create_directories
+    end
+
+    def current_medium_id
+      @metadata.medium.to_sym
+    rescue StandardError
+      :dialog
+    end
+
+    def scaffolded_dirs_for_medium
+      MediumRegistry.find(current_medium_id).scaffolded_dirs
+    rescue StandardError
+      %w[characters scenes transcripts arcs]
     end
 
     def sanitize_filename(name)

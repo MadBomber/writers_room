@@ -180,6 +180,7 @@ class ProducerTest < Minitest::Test
     transcript_file = File.join(transcripts_dir, "scene1.txt")
 
     File.write(transcript_file, <<~TRANSCRIPT)
+      ---
       Alice: Hello, how are you?
       Bob: I'm doing well, thanks!
       Alice: That's great to hear.

@@ -12,6 +12,7 @@ module WritersRoom
     DEFAULT_METADATA = {
       "name" => "",
       "concept" => "",
+      "medium" => "dialog",
       "created_at" => Time.now.to_s,
       "story_arcs" => [],
       "timeline" => []
@@ -52,10 +53,11 @@ module WritersRoom
     end
 
     # Create new project metadata
-    def self.create(project_path, name:, concept: "")
+    def self.create(project_path, name:, concept: "", medium: "dialog")
       metadata = new(project_path)
       metadata.data["name"] = name
       metadata.data["concept"] = concept
+      metadata.data["medium"] = medium.to_s
       metadata.data["created_at"] = Time.now.to_s
       metadata.save
       metadata
@@ -77,6 +79,15 @@ module WritersRoom
 
     def concept=(value)
       @data["concept"] = value
+      save
+    end
+
+    def medium
+      @data["medium"] || "dialog"
+    end
+
+    def medium=(value)
+      @data["medium"] = value.to_s
       save
     end
 
