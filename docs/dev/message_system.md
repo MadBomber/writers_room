@@ -37,6 +37,14 @@ Sets `:scene_complete` in shared memory, signaling the Room to stop the scene.
 
 Allow actors to read and write arbitrary state in shared memory. Useful for tracking scene context, character observations, and narrative notes.
 
+### ReadFileTool / WriteFileTool / ListDirectoryTool
+
+File system tools that allow actors to read from and write to project files, and list directory contents. Useful for actors that need to reference project materials during a scene.
+
+### ProjectTool
+
+Provides access to project metadata and configuration, allowing actors to be aware of the project context.
+
 ## Shared Memory
 
 `RobotLab::Memory` provides a reactive key-value store shared by all actors in a Room.

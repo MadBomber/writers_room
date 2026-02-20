@@ -20,20 +20,37 @@ To use OpenAI or Anthropic instead, see [Configuration](configuration.md).
 ## Create a Project
 
 ```bash
-wr init my_show --concept "A comedy about two rival chefs"
-cd my_show
+wr init my_novella --medium novella --concept "A detective retires, then a letter arrives"
+cd my_novella
 ```
 
-This creates:
+If you omit `--medium`, an interactive menu lists available media types. Each medium scaffolds directories and workflows suited to that format.
+
+### Available Media Types
+
+| Medium | Directories |
+|--------|-------------|
+| dialog | characters, scenes, transcripts, arcs |
+| documentary | research, timeline, segments, interviews, transcripts, sources |
+| novel | characters, relationships, arcs, settings, locations, research, timeline, backstory, chapters, parts, transcripts |
+| novella | characters, relationships, arcs, settings, locations, backstory, chapters, drafts, transcripts |
+| radio_play | characters, arcs, settings, episodes, scenes, transcripts, sound_design |
+| screenplay | characters, arcs, settings, locations, acts, sequences, scenes, transcripts |
+| short_story | characters, settings, scenes, drafts, transcripts |
+| stage_play | characters, arcs, settings, acts, scenes, transcripts |
+| tv_series | characters, arcs, settings, locations, seasons, episodes, scenes, transcripts |
+
+### What Gets Created
 
 ```
-my_show/
+my_novella/
   config.yml          # LLM provider and model settings
-  project.md          # Project metadata and concept
-  characters/         # Character markdown files
-  scenes/             # Scene markdown files
-  transcripts/        # Generated dialog transcripts
-  arcs/               # Story arc outlines
+  project.md          # Project metadata (name, concept, medium)
+  story_bible.yml     # Auto-generated element index
+  characters/         # Character files
+  chapters/           # Chapter files
+  arcs/               # Story arcs
+  ...                 # Other dirs based on medium
 ```
 
 All project files except `config.yml` are markdown with YAML front matter.
@@ -47,10 +64,10 @@ Use the writer tools to flesh out your project with LLM assistance:
 wr write develop-concept
 
 # Develop a character profile
-wr write develop-character "Chef Marco" --personality "fiery Italian perfectionist"
+wr write develop-character "Alice" --personality "retired detective, sharp but weary"
 
 # Create a story arc
-wr write create-arc "Act 1" --description "The rival chefs are forced to share a kitchen"
+wr write create-arc "Act 1" --description "The letter changes everything"
 
 # Break down the arc into scenes
 wr write breakdown-scenes "Act 1" --num-scenes 5
@@ -58,33 +75,76 @@ wr write breakdown-scenes "Act 1" --num-scenes 5
 
 All writer commands support `--chat` for interactive conversation with the LLM.
 
-## Create Characters and Scenes
+## Create Story Elements
+
+WritersRoom provides universal CRUD commands for all element types. Each supports `create`, `list`, `show`, `version`, and `status`.
 
 ```bash
-# Create character files
-wr character create "Chef Marco" --personality "perfectionist" --speaking-style "passionate"
-wr character create "Chef Luna" --personality "innovative" --speaking-style "calm and precise"
+# Characters
+wr character create "Alice Morgan" --personality "curious" --speaking-style "formal"
+wr character list
 
-# Create a scene
-wr scene create "Kitchen Clash" --description "First day sharing the kitchen" --characters Marco Luna
+# Chapters (novel/novella)
+wr chapter create "The Letter" --body "Alice finds a mysterious letter."
+wr chapter show the_letter
+wr chapter version the_letter           # create a versioned snapshot
+wr chapter status the_letter revision   # update status
+
+# Scenes
+wr scene create "Opening" --description "A quiet morning" --characters alice_morgan
+wr scene list
+
+# Other element types
+wr arc create "Main Arc" --body "The central conflict"
+wr location create "The Study"
+wr setting create "Victorian London"
+wr relationship create "Alice and Bob"
+wr theme create "Identity"
 ```
+
+## Story Bible
+
+The story bible is an auto-generated index mapping slugs and aliases to files.
+
+```bash
+wr bible regenerate     # rebuild from project files
+wr bible show           # display all indexed elements
+wr bible search "Alice" # find by name, slug, or substring
+```
+
+## Project Status
+
+Check your project's state and get suggested next steps:
+
+```bash
+wr status
+```
+
+## Interactive Chat
+
+Run bare `wr` (no subcommand) to start a context-aware interactive writing session:
+
+```bash
+wr
+```
+
+The chat is aware of your project, medium type, and current working directory.
 
 ## Direct a Scene
 
+For dialog-oriented media, direct scenes with LLM-powered actors:
+
 ```bash
-wr direct scenes/kitchen_clash.md
+wr direct scenes/opening.md --max-lines 30
 ```
 
-Each character maintains its own personality and voice throughout the dialog. The scene ends when the line limit is reached or the timeout expires.
+Each character maintains its own personality and voice throughout the dialog.
 
 ## Run a Full Production
 
 ```bash
 # Produce all scenes in the project
 wr produce
-
-# Or produce specific scenes
-wr produce scenes/kitchen_clash.md scenes/taste_test.md
 
 # Interactive chat mode for production planning
 wr produce --chat
@@ -97,6 +157,14 @@ wr report
 ```
 
 Summarizes all transcripts with line counts per character and scene statistics.
+
+## Export
+
+```bash
+wr export manuscript    # formatted manuscript (adapts to medium)
+wr export bible         # story bible as markdown
+wr export references    # cross-reference graph
+```
 
 ## Customizing Prompts
 
@@ -126,5 +194,5 @@ See [Project Structure](project_structure.md#prompt-templates) for details.
 
 **"No project found"**
 
-- Run commands from inside a project directory (one containing `config.yml` or `project.md`)
+- Run commands from inside a project directory (one containing `project.md`)
 - Or create a new project with `wr init`

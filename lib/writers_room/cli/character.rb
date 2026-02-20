@@ -5,6 +5,8 @@ require "thor"
 module WritersRoom
   module Commands
     class Character < Thor
+      namespace "character"
+
       desc "create NAME", "Create a new character"
       method_option :personality,
                     aliases: "-p",

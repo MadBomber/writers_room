@@ -13,6 +13,9 @@ module WritersRoom
   end
 
   class CLI < Thor
+    package_name "wr"
+    namespace "wr"
+
     # Global class options
     class_option :help,
                  type: :boolean,

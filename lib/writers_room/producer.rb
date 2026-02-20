@@ -59,6 +59,7 @@ module WritersRoom
     # Create a new character from a template (.md with front matter)
     def create_character(name, traits = {})
       characters_dir = File.join(@project_path, "characters")
+      FileUtils.mkdir_p(characters_dir)
       character_file = File.join(characters_dir, "#{sanitize_filename(name)}.md")
 
       if File.exist?(character_file)
@@ -85,6 +86,7 @@ module WritersRoom
     # Create a new scene (.md with front matter)
     def create_scene(name, description, characters = [])
       scenes_dir = File.join(@project_path, "scenes")
+      FileUtils.mkdir_p(scenes_dir)
       scene_file = File.join(scenes_dir, "#{sanitize_filename(name)}.md")
 
       if File.exist?(scene_file)
@@ -256,7 +258,7 @@ module WritersRoom
 
     def ensure_project_structure
       scaffolder = ProjectScaffolder.new(@project_path, medium_id: current_medium_id)
-      scaffolder.create_directories
+      scaffolder.scaffold!
     end
 
     def current_medium_id

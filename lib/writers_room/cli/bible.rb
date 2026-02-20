@@ -5,6 +5,8 @@ require "thor"
 module WritersRoom
   module Commands
     class Bible < Thor
+      namespace "bible"
+
       desc "regenerate", "Regenerate the story bible index from project files"
       def regenerate
         project = Dir.pwd

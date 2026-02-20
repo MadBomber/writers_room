@@ -45,10 +45,18 @@ module WritersRoom
     def resolve(name_or_alias)
       query = name_or_alias.to_s.downcase.strip
 
+      # Exact match first
       @data.fetch("elements", {}).each do |slug, entry|
         return entry if slug == query
         return entry if entry["name"]&.downcase == query
         return entry if Array(entry["aliases"]).any? { |a| a.to_s.downcase == query }
+      end
+
+      # Substring match as fallback
+      @data.fetch("elements", {}).each do |slug, entry|
+        return entry if slug.include?(query)
+        return entry if entry["name"]&.downcase&.include?(query)
+        return entry if Array(entry["aliases"]).any? { |a| a.to_s.downcase.include?(query) }
       end
 
       nil

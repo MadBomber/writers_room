@@ -31,7 +31,7 @@ model_name: gpt-oss:20b
 Override the provider and model at project creation time:
 
 ```bash
-wr init my_project --provider openai --model gpt-4
+wr init my_project --medium novella --provider openai --model gpt-4
 ```
 
 Or edit `config.yml` directly.

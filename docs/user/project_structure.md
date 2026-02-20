@@ -2,152 +2,157 @@
 
 ## Project Layout
 
-Each WritersRoom project has this structure:
+Each WritersRoom project has a base structure plus medium-specific directories:
 
 ```
-my_project/
-  config.yml                    # LLM provider and model settings
-  project.md                    # Project metadata, concept, and story arcs
-  characters/                   # Character files (markdown with front matter)
-    alice.md
-    bob.md
-  scenes/                       # Scene files (markdown with front matter)
-    scene_01_opening.md
-    scene_02_conflict.md
-  transcripts/                  # Generated dialog transcripts
-  arcs/                         # Story arc outlines and breakdowns
+my_novella/
+  config.yml                    # LLM provider and model settings (only YAML file)
+  project.md                    # Project metadata: name, concept, medium
+  story_bible.yml               # Auto-generated element index
+  characters/                   # Character files
+    alice_morgan.md
+  chapters/                     # Chapter files (novella medium)
+    the_letter.md
+    the_letter_v1.md            # Versioned snapshot
+  arcs/                         # Story arc outlines
+  settings/
+  locations/
+  relationships/
+  backstory/
+  drafts/
+  transcripts/
 ```
 
-All project files except `config.yml` are markdown with YAML front matter.
+The exact set of subdirectories depends on the medium type chosen during `wr init`. See [Getting Started](getting_started.md#available-media-types) for the full table.
 
 Create a new project with:
 
 ```bash
-wr init my_project --concept "A story about two rival chefs"
+wr init my_novella --medium novella --concept "A detective retires, then a letter arrives"
 ```
-
-This creates `config.yml`, `project.md`, and the four subdirectories.
 
 ## File Format
 
-Every file in a WritersRoom project (except `config.yml`) uses markdown with YAML front matter. Structured data goes in the front matter, prose goes in the body.
+Every file in a WritersRoom project (except `config.yml` and `story_bible.yml`) uses markdown with YAML front matter. Structured data goes in the front matter, prose goes in the body.
 
 ## Character File Format
 
 ```markdown
 ---
-name: Alex
-age: 17
-sport: Basketball team captain
-relationships:
-  Tyler: "Soccer captain. Initially rival for gym time."
-  Marcus: "Team statistician. Values his insights."
+name: Alice Morgan
+element_type: characters
+status: draft
+personality: curious
+speaking_style: formal
+background: Retired detective
 ---
 
 ## Personality
 
-Basketball team captain. Intensely focused and competitive.
-Direct communicator. Strong work ethic.
+Retired detective with a sharp analytical mind. Intensely curious,
+with a formal speaking style that softens around close friends.
 
 ## Voice Pattern
 
-Direct and concise. Short, punchy sentences when focused.
-Uses basketball terms naturally.
+Precise and measured. Uses law-enforcement terminology naturally.
+Asks pointed questions even in casual conversation.
 
 ## Current Arc
 
-Learning that relationships aren't distractions.
-Discovering vulnerability doesn't mean weakness.
+Learning to let go of old cases. Drawn back in by a letter
+that reopens questions she thought were settled.
 ```
 
 ### Front Matter Fields
 
 | Field | Description |
 |-------|-------------|
-| `name` | Character name (must match the name used in scene files) |
-| `age` | Character age |
-| `sport` | Activity or role |
-| `relationships` | Other character names mapped to relationship descriptions |
+| `name` | Character name (matches the name used in scene files) |
+| `element_type` | Always `characters` for character files |
+| `status` | Workflow status (draft, revision, final, etc.) |
+| `personality` | Personality traits |
+| `speaking_style` | How the character speaks |
+| `background` | Brief backstory |
 
-### Body Sections
+## Element File Format
 
-| Section | Description |
-|---------|-------------|
-| Personality | Personality traits, tendencies, motivations |
-| Voice Pattern | How the character speaks, with examples |
-| Current Arc | The character's growth trajectory in the story |
+All element types (chapters, arcs, locations, settings, relationships, themes) follow the same pattern:
+
+```markdown
+---
+name: The Letter
+element_type: chapters
+status: draft
+---
+
+Alice finds a mysterious letter on her doorstep. The handwriting
+is familiar but she can't place it.
+```
+
+### Common Front Matter Fields
+
+| Field | Description |
+|-------|-------------|
+| `name` | Display name for the element |
+| `element_type` | The element's type (chapters, arcs, locations, etc.) |
+| `status` | Workflow status |
+| `aliases` | Alternative names for story bible lookups |
+| `version` | Version number (on versioned snapshots) |
+| `based_on` | Source file for a version snapshot |
 
 ## Scene File Format
 
 ```markdown
 ---
-scene_number: 1
-scene_name: "The Gym Wars"
-week: 1
-location: "Riverside High gymnasium"
+name: Opening
+description: A quiet morning
 characters:
-  - Marcus
-  - Jamie
-  - Tyler
-  - Alex
-  - Benny
-  - Zoe
-tone: Comedic, chaotic, energetic
-key_moments:
-  - "Marcus and Jamie bond over finding the scheduling bug"
-  - "Tyler and Alex's hands linger during a collision"
+  - alice_morgan
+element_type: scenes
+status: draft
 ---
 
 ## Context
 
-Tyler's soccer team and Alex's basketball team both arrive
-for practice at the same time due to a scheduling error.
+A quiet autumn morning. Alice sits on her porch with coffee,
+watching leaves drift across the yard.
 
 ## Scene Objectives
 
-**Marcus:** Solve the scheduling conflict using logic and data.
-
-**Jamie:** Find and fix the bug in the scheduling system.
-
-**Tyler:** Get gym time without being a jerk about it.
-
-**Alex:** Secure gym time for basketball practice.
-
-**Benny:** Make everyone laugh. Defuse the tension.
-
-**Zoe:** Provide dramatic narration of events.
+**Alice:** Establish her retired life and hint at restlessness.
 
 ## Beat Structure
 
-1. **The Standoff** (2 minutes) -- Both teams arrive. Tension builds.
-2. **The Negotiators** (3 minutes) -- Marcus mediates. Jamie debugs.
+1. **Morning routine** -- Alice reads the paper, checks the mail.
+2. **The letter** -- She finds an unmarked envelope.
 ```
 
-### Front Matter Fields
+## Versioning
 
-| Field | Description |
-|-------|-------------|
-| `scene_number` | Numeric identifier |
-| `scene_name` | Display name for the scene |
-| `week` | Timeline position (for multi-week stories) |
-| `location` | Where the scene takes place |
-| `characters` | List of character names (must match character filenames) |
-| `tone` | Emotional quality of the scene |
-| `key_moments` | Important events that should occur |
+Any element can be versioned. Versions are stored as `slug_v1.md`, `slug_v2.md`, etc. in the same directory:
 
-### Body Sections
+```bash
+wr chapter version the_letter    # creates the_letter_v1.md
+wr chapter version the_letter    # creates the_letter_v2.md
+```
 
-| Section | Description |
-|---------|-------------|
-| Context | Narrative setup and situation |
-| Scene Objectives | Per-character goals for the scene |
-| Beat Structure | Sequence of dramatic beats with timing |
+Version files are excluded from element listings and counts. They serve as snapshots you can refer back to.
+
+## Story Bible
+
+The `story_bible.yml` file is an auto-generated index mapping element slugs and aliases to their files. It is rebuilt from project files:
+
+```bash
+wr bible regenerate     # rebuild from all project files
+wr bible show           # display indexed elements
+wr bible search "Alice" # find by name, slug, or substring
+```
+
+The story bible supports exact matching on slug, name, and aliases, with a substring fallback for partial matches.
 
 ## Prompt Templates
 
-WritersRoom uses [prompt_manager](https://github.com/madbomber/prompt_manager)
-for its LLM prompts. Templates are markdown files with YAML front matter and
-ERB interpolation.
+WritersRoom uses [RobotLab](https://github.com/madbomber/robot_lab) templates for its LLM prompts. Templates are markdown files with YAML front matter and ERB interpolation.
 
 Default templates ship with the gem in `lib/writers_room/prompts/`:
 
@@ -160,19 +165,18 @@ Default templates ship with the gem in `lib/writers_room/prompts/`:
 | `create_arc.md` | Create a story arc outline |
 | `breakdown_scenes.md` | Break an arc into individual scenes |
 
-To customize prompts for a project, create a `prompts/` directory in your
-project and add your own versions. Project-level prompts override the gem
-defaults.
+To customize prompts for a project, create a `prompts/` directory in your project and add your own versions. Project-level prompts override the gem defaults.
 
 ```
-my_project/
+my_novella/
   prompts/                        # Optional per-project prompt overrides
     actor_system.md               # Custom character instructions
     develop_concept.md            # Custom concept development style
   config.yml
   project.md
+  story_bible.yml
   characters/
-  scenes/
+  chapters/
   ...
 ```
 
@@ -205,34 +209,6 @@ When you run `wr direct scenes/scene_01.md`, WritersRoom locates characters auto
 This means you can run scenes from inside a project directory without specifying the character path:
 
 ```bash
-cd my_project
-wr direct scenes/scene_01_opening.md
-```
-
-## Example Project: teen_play
-
-The included `projects/teen_play/` demonstrates a complete project:
-
-```
-projects/teen_play/
-  config.yml                          # provider: ollama, model_name: gpt-oss
-  project.md                          # "Love by the Numbers" metadata
-  characters/
-    marcus.md                         # The analytical math whiz
-    jamie.md                          # The logical robotics president
-    tyler.md                          # The sensitive soccer captain
-    alex.md                           # The intense basketball captain
-    benny.md                          # The insecure class clown
-    zoe.md                            # The theatrical drama kid
-  scenes/
-    scene_01_gym_wars.md              # All 6 characters meet (Week 1)
-    scene_02_statistical_anomaly.md   # Marcus, Jamie, Benny (Week 2)
-    scene_04_equipment_room.md        # Benny & Zoe breakthrough (Week 6)
-    scene_08_data_dump.md             # Finale, all 6 characters (Week 16)
-```
-
-Run a teen_play scene:
-
-```bash
-wr direct projects/teen_play/scenes/scene_01_gym_wars.md --max-lines 30
+cd my_novella
+wr direct scenes/opening.md
 ```

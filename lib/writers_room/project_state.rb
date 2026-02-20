@@ -17,8 +17,8 @@ module WritersRoom
       @medium.scaffolded_dirs.each do |dir|
         dir_path = File.join(@project_path, dir)
         next unless Dir.exist?(dir_path)
-        count = Dir.glob(File.join(dir_path, "*.md")).count
-        counts[dir] = count if count > 0
+        files = Dir.glob(File.join(dir_path, "*.md")).reject { |f| f.match?(/_v\d+\.md\z/) }
+        counts[dir] = files.count if files.count > 0
       end
       counts
     end

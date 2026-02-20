@@ -1,5 +1,25 @@
 # Writer's Room - Changelog
 
+## [0.0.3] - 2026-02-20
+
+### Bug Fixes
+
+- **Project scaffolding** — `wr init` now creates `story_bible.yml` in new projects; `ensure_project_structure` calls `scaffold!` instead of `create_directories`
+- **Scene/character creation** — `create_scene` and `create_character` now call `FileUtils.mkdir_p` so they work even when the target directory is not in the medium's scaffolded dirs
+- **Writer chat mode** — All four `chat_about_*` methods called `session.start` which did not exist on `ChatSession`; replaced with `ChatTui.new(session).run`
+- **Story bible search** — `StoryBible#resolve` only did exact matching; added substring fallback so `wr bible search "Alice"` finds "Alice Morgan"
+- **Element count inflation** — `ProjectState#element_counts` counted version files (`_v1.md`, `_v2.md`) as separate elements; now excludes `_v\d+.md` files
+- **Nil body crash** — `FrontMatter.dump` raised `NoMethodError` when `body` was `nil`; added `body.to_s` guard
+- **Missing require** — `CrossReference` used `Set` without `require "set"`; added the require for backward compatibility
+
+### Improvements
+
+- **CLI tree display** — `wr tree` now shows clean names:
+  - Root displays `wr` instead of `writers_room:c_l_i`
+  - Dynamic element subcommands show their type name instead of anonymous class hex addresses
+  - Named subcommands show short names instead of full Ruby constant paths
+- **Zeitwerk configuration** — Added `"cli" => "CLI"` inflection and `loader.ignore` for the `cli/` directory to prevent conflicts with manual autoloading
+
 ## [unreleased]
 
 ## [0.0.2]  - unreleased

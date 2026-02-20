@@ -6,8 +6,8 @@ The workflow follows a writers' room model: write material, direct scenes, produ
 
 ## User Guide
 
-- [Getting Started](user/getting_started.md) -- Installation, first project, first scene
-- [Project Structure](user/project_structure.md) -- Project layout, character and scene file formats
+- [Getting Started](user/getting_started.md) -- Installation, first project, choosing a medium
+- [Project Structure](user/project_structure.md) -- Media types, file formats, versioning, story bible
 - [Configuration](user/configuration.md) -- LLM providers, environment variables, per-project settings
 - [Quick Reference](user/quick_reference.md) -- Command cheat sheet and recommended workflow
 

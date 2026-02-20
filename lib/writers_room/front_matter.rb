@@ -62,6 +62,7 @@ module WritersRoom
     # @param body [String] markdown body
     # @return [String] rendered content
     def dump(metadata, body = "")
+      body = body.to_s
       meta_str = metadata.empty? ? "" : stringify_keys(metadata).to_yaml.sub(/^---\n/, "")
       result = "---\n#{meta_str}---\n"
       result += "\n#{body}\n" unless body.empty?

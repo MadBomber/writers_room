@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "set"
+
 module WritersRoom
   # Scans element bodies for name/alias references and builds a reference graph.
   class CrossReference

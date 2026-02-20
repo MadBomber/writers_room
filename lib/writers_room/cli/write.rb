@@ -5,6 +5,8 @@ require "thor"
 module WritersRoom
   module Commands
     class Write < Thor
+      namespace "write"
+
       desc "develop-concept", "Develop the project concept into a fuller description"
       method_option :chat,
                     type: :boolean,

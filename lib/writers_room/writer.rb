@@ -29,13 +29,13 @@ module WritersRoom
     def develop_concept(chat: false)
       current_concept = @metadata.concept
 
-      if current_concept.empty?
-        raise Error, "No concept found. Initialize project with a concept first."
-      end
-
       if chat
         chat_result = chat_about_concept(current_concept)
         return chat_result if chat_result
+      end
+
+      if current_concept.empty?
+        raise Error, "No concept found. Initialize project with a concept first, or use --chat to develop one interactively."
       end
 
       @robot.update(
@@ -210,16 +210,19 @@ module WritersRoom
 
     def chat_about_concept(current_concept)
       require_relative "chat_session"
+      require_relative "chat_tui"
+
+      task = current_concept.empty? ? "Creating a project concept from scratch" : "Developing the project concept"
 
       context = {
         project_name: @metadata.name,
-        project_concept: current_concept,
-        task: "Developing the project concept",
+        project_concept: current_concept.empty? ? "(not yet defined)" : current_concept,
+        task: task,
         subject: "Project Concept"
       }
 
-      session = ChatSession.new(context: context)
-      session.start
+      session = ChatSession.new(context: context, project_path: @project_path)
+      ChatTui.new(session).run
 
       chat_log_path = File.join(@project_path, "concept_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
@@ -233,6 +236,7 @@ module WritersRoom
 
     def chat_about_character(name, personality, background)
       require_relative "chat_session"
+      require_relative "chat_tui"
 
       context = {
         project_name: @metadata.name,
@@ -242,10 +246,11 @@ module WritersRoom
         additional: "Personality: #{personality}\nBackground: #{background}"
       }
 
-      session = ChatSession.new(context: context)
-      session.start
+      session = ChatSession.new(context: context, project_path: @project_path)
+      ChatTui.new(session).run
 
       chat_log_path = File.join(@project_path, "characters", "#{sanitize_filename(name)}_chat_#{Time.now.to_i}.md")
+      FileUtils.mkdir_p(File.dirname(chat_log_path))
       session.save(chat_log_path)
 
       {
@@ -258,6 +263,7 @@ module WritersRoom
 
     def chat_about_arc(arc_name, description)
       require_relative "chat_session"
+      require_relative "chat_tui"
 
       context = {
         project_name: @metadata.name,
@@ -267,10 +273,11 @@ module WritersRoom
         additional: "Description: #{description}"
       }
 
-      session = ChatSession.new(context: context)
-      session.start
+      session = ChatSession.new(context: context, project_path: @project_path)
+      ChatTui.new(session).run
 
       chat_log_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_chat_#{Time.now.to_i}.md")
+      FileUtils.mkdir_p(File.dirname(chat_log_path))
       session.save(chat_log_path)
 
       {
@@ -283,6 +290,7 @@ module WritersRoom
 
     def chat_about_scene_breakdown(arc_name, arc, num_scenes)
       require_relative "chat_session"
+      require_relative "chat_tui"
 
       context = {
         project_name: @metadata.name,
@@ -292,10 +300,11 @@ module WritersRoom
         additional: "Arc Description: #{arc['description']}\nRequested scenes: #{num_scenes}"
       }
 
-      session = ChatSession.new(context: context)
-      session.start
+      session = ChatSession.new(context: context, project_path: @project_path)
+      ChatTui.new(session).run
 
       chat_log_path = File.join(@project_path, "arcs", "#{sanitize_filename(arc_name)}_breakdown_chat_#{Time.now.to_i}.md")
+      FileUtils.mkdir_p(File.dirname(chat_log_path))
       session.save(chat_log_path)
 
       {

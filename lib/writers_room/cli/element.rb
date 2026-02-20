@@ -147,10 +147,20 @@ module WritersRoom
         end
       end
 
-      # Factory method to create a subclass for a specific element type
+      # Factory method to create a subclass for a specific element type.
+      # Assigns the class to a constant under Commands so Thor can display
+      # a human-readable name instead of an anonymous class reference.
       def self.for_type(type_name)
-        klass = Class.new(self)
+        const_name = type_name.to_s.split("_").map(&:capitalize).join
+        if Commands.const_defined?(const_name, false)
+          return Commands.const_get(const_name, false)
+        end
+
+        klass = Class.new(self) do
+          namespace type_name.to_s
+        end
         klass.instance_variable_set(:@element_type_name, type_name.to_s)
+        Commands.const_set(const_name, klass)
         klass
       end
     end

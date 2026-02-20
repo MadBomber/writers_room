@@ -5,6 +5,8 @@ require "thor"
 module WritersRoom
   module Commands
     class Export < Thor
+      namespace "export"
+
       desc "manuscript", "Export project as a formatted manuscript"
       method_option :output,
                     aliases: "-o",
