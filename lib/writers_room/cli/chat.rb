@@ -53,7 +53,7 @@ module WritersRoom
           template: template,
           project_path: context.project_path
         )
-        session.start
+        WritersRoom::ChatTui.new(session).run
 
         save_chat_log(context.project_path, session)
       end
@@ -64,7 +64,7 @@ module WritersRoom
         }
 
         session = WritersRoom::ChatSession.new(context: chat_context, template: :context_chat_init)
-        session.start
+        WritersRoom::ChatTui.new(session).run
       end
 
       def load_project_elements(project_path, medium)
