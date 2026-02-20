@@ -1,6 +1,10 @@
 # Writer's Room - Changelog
 
-## [Latest] - Ollama Configuration Update
+## [unreleased]
+
+## [0.0.2]  - unreleased
+
+- Ollama Configuration Update
 
 ### Changed
 
