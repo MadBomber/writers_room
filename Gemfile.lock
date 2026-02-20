@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    writers_room (0.0.3)
+    writers_room (0.0.4)
       debug_me (>= 1.0)
       myway_config (~> 0.1)
       robot_lab (>= 0.0.7)
@@ -106,7 +106,7 @@ GEM
       anyway_config (>= 2.0)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    onnxruntime (0.10.1-arm64-darwin)
+    onnxruntime (0.10.2-arm64-darwin)
       ffi
     ostruct (0.6.3)
     prompt_manager (1.0.2)
@@ -234,7 +234,7 @@ CHECKSUMS
   multipart-post (2.4.1) sha256=9872d03a8e552020ca096adadbf5e3cb1cd1cdd6acd3c161136b8a5737cdb4a8
   myway_config (0.1.2) sha256=c91741ded05babc443fcf5d012741ded8a1a1998c40a689cb32af27940b66be3
   net-http (0.9.1) sha256=25ba0b67c63e89df626ed8fac771d0ad24ad151a858af2cc8e6a716ca4336996
-  onnxruntime (0.10.1-arm64-darwin) sha256=8afc0feaa03bd969c4c0f43379254106ac90dbb548c8bb2cae4cca25f19771b7
+  onnxruntime (0.10.2-arm64-darwin) sha256=ade4c438b598025e006594c1cbd861b2987eb32b362633cb85693770749fa70c
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   prompt_manager (1.0.2) sha256=ec19631fc90d092df1d7d08aa3d523636f55a3725b90635afc1fae7d60609e31
   protocol-hpack (1.5.1) sha256=6feca238b8078da1cd295677d6f306c6001af92d75fe0643d33e6956cbc3ad91
@@ -266,7 +266,7 @@ CHECKSUMS
   typed_bus (0.0.1) sha256=bf20463b4e0099349fd8931d7cf70f3c5fad7c6b657c566b40898637cde2038e
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
   uri (1.1.1) sha256=379fa58d27ffb1387eaada68c749d1426738bd0f654d812fcc07e7568f5c57c6
-  writers_room (0.0.3)
+  writers_room (0.0.4)
   zeitwerk (2.7.5) sha256=d8da92128c09ea6ec62c949011b00ed4a20242b255293dd66bf41545398f73dd
 
 BUNDLED WITH
