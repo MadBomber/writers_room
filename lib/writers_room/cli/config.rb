@@ -8,18 +8,12 @@ module WritersRoom
       desc "config", "Show current configuration"
 
       def config
-        config_path = File.join(Dir.pwd, "config.yml")
-
-        unless File.exist?(config_path)
-          say "No config.yml found in current directory.", :yellow
-          say "Run 'wr init <project_name>' to create a new project.", :yellow
-          exit 1
-        end
-
-        config = WritersRoom::Config.new(config_path)
-        say "Configuration (#{config_path}):", :cyan
-        say "  Provider:   #{config.provider}", :white
-        say "  Model:      #{config.model_name}", :white
+        cfg = WritersRoom.config
+        say "Configuration:", :cyan
+        say "  Provider:   #{cfg.provider}", :white
+        say "  Model:      #{cfg.model_name}", :white
+        say "  Scene max lines: #{cfg.scene.max_lines}", :white
+        say "  Scene timeout:   #{cfg.scene.timeout}s", :white
       rescue StandardError => e
         say "Error reading configuration: #{e.message}", :red
         exit 1

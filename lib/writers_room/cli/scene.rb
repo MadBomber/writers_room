@@ -5,6 +5,8 @@ require "thor"
 module WritersRoom
   module Commands
     class Scene < Thor
+      namespace "scene"
+
       desc "create NAME", "Create a new scene"
       method_option :description,
                     aliases: "-d",

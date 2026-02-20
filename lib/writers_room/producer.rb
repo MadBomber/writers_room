@@ -5,34 +5,40 @@ require "fileutils"
 
 module WritersRoom
   # Producer manages the overall production: creates characters, scenes,
-  # and coordinates directors to run the full production
+  # and coordinates directors to run the full production.
   class Producer
-    attr_reader :project_path, :config, :metadata
+    attr_reader :project_path, :metadata
 
     def initialize(project_path = Dir.pwd)
       @project_path = File.expand_path(project_path)
-      @config_path = File.join(@project_path, "config.yml")
 
-      unless File.exist?(@config_path)
-        raise Error, "No config.yml found. Run 'wr init <project_name>' first."
+      unless File.exist?(File.join(@project_path, "config.yml")) ||
+             File.exist?(File.join(@project_path, "project.md"))
+        raise Error, "No project found. Run 'wr init <project_name>' first."
       end
 
-      @config = Config.new(@config_path)
       @metadata = ProjectMetadata.new(@project_path)
       ensure_project_structure
     end
 
     # Create a new project with concept
-    def self.create_project(project_path, name:, concept: "", **config_options)
+    def self.create_project(project_path, name:, concept: "", medium: "dialog", **config_options)
       FileUtils.mkdir_p(project_path)
 
-      # Create config
-      Config.create_project(project_path, config_options)
+      # Write config.yml if it doesn't already exist
+      config_path = File.join(project_path, "config.yml")
+      unless File.exist?(config_path)
+        config_data = {
+          "provider" => config_options[:provider] || "ollama",
+          "model_name" => config_options[:model_name] || "gpt-oss:20b"
+        }
+        File.write(config_path, YAML.dump(config_data))
+      end
 
-      # Create metadata with concept
-      ProjectMetadata.create(project_path, name: name, concept: concept)
+      # Create metadata with concept and medium (saves as .md)
+      ProjectMetadata.create(project_path, name: name, concept: concept, medium: medium)
 
-      # Create required directories
+      # Create required directories based on medium
       producer = new(project_path)
       producer.send(:ensure_project_structure)
       producer
@@ -40,7 +46,7 @@ module WritersRoom
 
     # Validate that the project has the required structure
     def validate_project
-      required_dirs = %w[characters scenes transcripts logs arcs]
+      required_dirs = scaffolded_dirs_for_medium
       missing = required_dirs.reject { |dir| Dir.exist?(File.join(@project_path, dir)) }
 
       if missing.any?
@@ -50,16 +56,17 @@ module WritersRoom
       true
     end
 
-    # Create a new character from a template
+    # Create a new character from a template (.md with front matter)
     def create_character(name, traits = {})
       characters_dir = File.join(@project_path, "characters")
-      character_file = File.join(characters_dir, "#{sanitize_filename(name)}.yml")
+      FileUtils.mkdir_p(characters_dir)
+      character_file = File.join(characters_dir, "#{sanitize_filename(name)}.md")
 
       if File.exist?(character_file)
         raise Error, "Character '#{name}' already exists"
       end
 
-      character_data = {
+      metadata = {
         "name" => name,
         "traits" => {
           "personality" => traits[:personality] || "neutral",
@@ -70,20 +77,23 @@ module WritersRoom
         "relationships" => traits[:relationships] || {}
       }
 
-      File.write(character_file, YAML.dump(character_data))
+      body = ""
+      content = FrontMatter.dump(metadata, body)
+      File.write(character_file, content)
       character_file
     end
 
-    # Create a new scene from a template
+    # Create a new scene (.md with front matter)
     def create_scene(name, description, characters = [])
       scenes_dir = File.join(@project_path, "scenes")
-      scene_file = File.join(scenes_dir, "#{sanitize_filename(name)}.yml")
+      FileUtils.mkdir_p(scenes_dir)
+      scene_file = File.join(scenes_dir, "#{sanitize_filename(name)}.md")
 
       if File.exist?(scene_file)
         raise Error, "Scene '#{name}' already exists"
       end
 
-      scene_data = {
+      metadata = {
         "scene_name" => name,
         "description" => description,
         "setting" => "",
@@ -91,7 +101,9 @@ module WritersRoom
         "objectives" => []
       }
 
-      File.write(scene_file, YAML.dump(scene_data))
+      body = ""
+      content = FrontMatter.dump(metadata, body)
+      File.write(scene_file, content)
       scene_file
     end
 
@@ -100,12 +112,12 @@ module WritersRoom
       characters_dir = File.join(@project_path, "characters")
       return [] unless Dir.exist?(characters_dir)
 
-      Dir.glob(File.join(characters_dir, "*.yml")).map do |file|
-        data = YAML.load_file(file)
+      Dir.glob(File.join(characters_dir, "*.md")).map do |file|
+        data = load_character_file(file)
         {
-          name: data["name"],
+          name: data["name"] || data[:name],
           file: file,
-          personality: data.dig("traits", "personality")
+          personality: data.dig("traits", "personality") || data.dig(:traits, :personality)
         }
       end
     end
@@ -115,12 +127,12 @@ module WritersRoom
       scenes_dir = File.join(@project_path, "scenes")
       return [] unless Dir.exist?(scenes_dir)
 
-      Dir.glob(File.join(scenes_dir, "*.yml")).map do |file|
-        data = YAML.load_file(file)
+      Dir.glob(File.join(scenes_dir, "*.md")).map do |file|
+        data = load_scene_file(file)
         {
-          name: data["scene_name"],
+          name: data["scene_name"] || data[:scene_name],
           file: file,
-          characters: data["characters"] || []
+          characters: data["characters"] || data[:characters] || []
         }
       end
     end
@@ -139,10 +151,9 @@ module WritersRoom
         additional: "Available scenes: #{scenes_list}\nTotal scenes: #{scene_files.count}"
       }
 
-      session = ChatSession.new(config: @config, context: context)
+      session = ChatSession.new(context: context)
       session.start
 
-      # Save chat log
       chat_log_path = File.join(@project_path, "production_chat_#{Time.now.to_i}.md")
       session.save(chat_log_path)
 
@@ -155,7 +166,7 @@ module WritersRoom
 
     # Run a full production (all scenes or specific scenes)
     def produce(scene_files = nil, options = {})
-      scene_files ||= Dir.glob(File.join(@project_path, "scenes", "*.yml"))
+      scene_files ||= find_scene_files
       scene_files = [scene_files] if scene_files.is_a?(String)
 
       results = []
@@ -172,11 +183,9 @@ module WritersRoom
 
         director = Director.new(
           scene_file: scene_file,
-          character_dir: File.join(@project_path, "characters")
+          character_dir: File.join(@project_path, "characters"),
+          max_lines: options[:max_lines]
         )
-
-        # Set max lines if specified
-        ENV["MAX_LINES"] = options[:max_lines].to_s if options[:max_lines]
 
         begin
           director.action!
@@ -215,13 +224,22 @@ module WritersRoom
 
       transcripts.each do |transcript|
         content = File.read(transcript)
-        lines = content.lines
+        in_dialog = false
 
-        lines.each do |line|
+        content.each_line do |line|
+          # Dialog starts after the separator line
+          if line.start_with?("---")
+            in_dialog = true
+            next
+          end
+          next unless in_dialog
           next if line.strip.empty?
-          next unless line.match?(/^(\w+):/)
 
-          character = line.match(/^(\w+):/)[1]
+          # Match "character_name:" or "character_name [emotion]:"
+          match = line.match(/^(\w+)(\s+\[.*?\])?:\s/)
+          next unless match
+
+          character = match[1]
           total_characters[character] ||= 0
           total_characters[character] += 1
           total_lines += 1
@@ -239,15 +257,38 @@ module WritersRoom
     private
 
     def ensure_project_structure
-      required_dirs = %w[characters scenes transcripts logs arcs]
-      required_dirs.each do |dir|
-        dir_path = File.join(@project_path, dir)
-        FileUtils.mkdir_p(dir_path) unless Dir.exist?(dir_path)
-      end
+      scaffolder = ProjectScaffolder.new(@project_path, medium_id: current_medium_id)
+      scaffolder.scaffold!
+    end
+
+    def current_medium_id
+      @metadata.medium.to_sym
+    rescue StandardError
+      :dialog
+    end
+
+    def scaffolded_dirs_for_medium
+      MediumRegistry.find(current_medium_id).scaffolded_dirs
+    rescue StandardError
+      %w[characters scenes transcripts arcs]
     end
 
     def sanitize_filename(name)
       name.downcase.gsub(/[^a-z0-9]+/, "_").gsub(/(^_|_$)/, "")
+    end
+
+    def find_scene_files
+      Dir.glob(File.join(@project_path, "scenes", "*.md"))
+    end
+
+    def load_character_file(file)
+      parsed = FrontMatter.load_file(file, symbolize_keys: false)
+      parsed[:metadata]
+    end
+
+    def load_scene_file(file)
+      parsed = FrontMatter.load_file(file, symbolize_keys: false)
+      parsed[:metadata]
     end
   end
 end

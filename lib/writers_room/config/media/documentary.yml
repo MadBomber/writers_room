@@ -1,0 +1,36 @@
+id: documentary
+label: Documentary
+universal_elements:
+  - story
+  - theme
+  - research
+  - timeline
+specific_elements:
+  segments:
+    dir: segments
+    singular: segment
+    plural: segments
+  interviews:
+    dir: interviews
+    singular: interview
+    plural: interviews
+scaffolded_dirs:
+  - research
+  - timeline
+  - segments
+  - interviews
+  - transcripts
+  - sources
+workflows:
+  - research
+  - outlining
+  - interviewing
+  - drafting
+  - revision
+  - final
+statuses:
+  - research
+  - outline
+  - draft
+  - revision
+  - final

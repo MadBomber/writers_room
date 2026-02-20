@@ -6,319 +6,206 @@
 ##  By:   Dewayne VanHoozer (dvanhoozer@gmail.com)
 #
 
-require "debug_me"
-include DebugMe
-
-require "json"
-require "redis"
-require "ruby_llm"
-require "smart_message"
-
-# Load message classes
-require_relative "messages/dialog_message"
-require_relative "messages/scene_control_message"
-
 module WritersRoom
-  class Actor
-    attr_reader :character_name, :character_info, :scene_info, :conversation_history
+  # AI-powered Actor that uses RobotLab's template system, tools, and
+  # bus messaging to participate in multi-character scenes.
+  #
+  # Follows the RobotLab example 16 Writer pattern:
+  # - Uses template + context instead of inline heredoc prompts
+  # - Equipped with tools (SpeakTool, ReadMemoryTool, etc.)
+  # - Reacts to bus messages via on_message handler
+  # - Resets chat before each message (shared memory is persistence)
+  #
+  class Actor < RobotLab::Robot
+    attr_reader :character_name, :character_info, :scene_info
+    attr_accessor :shared_memory, :display, :room
 
-    # Initialize an Actor with character information
+    RECENT_DIALOG_LIMIT = 10
+
+    # Initialize an Actor with character information.
     #
-    # @param character_info [Hash] Character details
-    # @option character_info [String] :name Character's name (required)
-    # @option character_info [String] :personality Character traits and behaviors
-    # @option character_info [String] :voice_pattern How the character speaks
-    # @option character_info [Hash] :relationships Current relationship statuses
-    # @option character_info [String] :current_arc Where they are in their character arc
-    # @option character_info [String] :sport Associated sport/activity
-    # @option character_info [Integer] :age Character's age
-    def initialize(character_info)
+    # @param character_info [Hash] Character details (from .md front matter)
+    # @param scene_info [Hash] Scene details (from .md front matter)
+    # @param bus [TypedBus::MessageBus] Shared message bus
+    # @param shared_memory [RobotLab::Memory] Shared scene memory
+    # @param display [Display] Terminal output formatter
+    # @param room [Room] Parent room container
+    # @param config [RobotLab::RunConfig, nil] Shared LLM configuration
+    def initialize(character_info:, scene_info:, bus:, shared_memory: nil, display: nil, room: nil, config: nil)
       @character_info = character_info
       @character_name = character_info[:name] || character_info["name"]
-      @scene_info = {}
-      @conversation_history = []
-      @llm = nil
-      @running = false
+      @scene_info = scene_info
+      @shared_memory = shared_memory
+      @display = display
+      @room = room
+      @messages_processed = 0
 
       validate_character_info!
-      setup_llm
 
-      debug_me("Actor initialized") { :character_name }
-    end
+      @actor_context = build_template_context
 
-    # Set the current scene information
-    #
-    # @param scene_info [Hash] Scene details
-    # @option scene_info [Integer] :scene_number Which scene this is
-    # @option scene_info [String] :scene_name Name/title of the scene
-    # @option scene_info [String] :location Where the scene takes place
-    # @option scene_info [Array<String>] :characters List of characters in scene
-    # @option scene_info [String] :objectives What this character wants in scene
-    # @option scene_info [String] :context Additional scene context
-    # @option scene_info [Integer] :week Which week in the timeline
-    def set_scene(scene_info)
-      @scene_info = scene_info
-      @conversation_history = [] # Reset history for new scene
-
-      debug_me("Scene set for #{@character_name}") do
-        [@scene_info[:scene_name], @scene_info[:scene_number]]
-      end
-    end
-
-    # Start the actor listening and responding to messages
-    #
-    # @param channel [String] Redis channel to subscribe to
-    def perform(channel: "writers_room:dialog")
-      @running = true
-
-      debug_me("#{@character_name} starting performance on channel: #{channel}")
-
-      # Subscribe to the dialog channel
-      subscribe_to_dialog(channel) do |message_data|
-        break unless @running
-
-        process_message(message_data)
-      end
-    end
-
-    # Stop the actor
-    def stop
-      @running = false
-      debug_me("#{@character_name} stopping")
-    end
-
-    # Generate dialog based on current context
-    #
-    # @param prompt_context [String] Optional additional context
-    # @return [String] Generated dialog line
-    def generate_dialog(prompt_context: nil)
-      system_prompt = build_system_prompt
-      user_prompt = build_user_prompt(prompt_context)
-
-      debug_me("Generating dialog for #{@character_name}") do
-        [system_prompt.length, user_prompt.length]
-      end
-
-      response = @llm.chat([
-                             { role: "system", content: system_prompt },
-                             { role: "user", content: user_prompt },
-                           ])
-
-      dialog = extract_dialog(response)
-      @conversation_history << { speaker: @character_name, line: dialog, timestamp: Time.now }
-
-      dialog
-    end
-
-    # Send dialog to the scene via SmartMessage/Redis
-    #
-    # @param dialog [String] The dialog to send
-    # @param channel [String] Redis channel to publish to
-    # @param emotion [String] Optional emotional tone
-    # @param addressing [String] Optional character being addressed
-    def speak(dialog, channel: "writers_room:dialog", emotion: nil, addressing: nil)
-      message = DialogMessage.new(
-        from: @character_name,
-        content: dialog,
-        scene: @scene_info[:scene_number],
-        timestamp: Time.now.to_i,
-        emotion: emotion,
-        addressing: addressing,
+      super(
+        name:        @character_name.downcase.gsub(/\s+/, "_"),
+        template:    :actor_system,
+        context:     @actor_context,
+        bus:         bus,
+        config:      config,
+        local_tools: build_tools
       )
 
-      message.publish(channel)
-
-      debug_me("#{@character_name} spoke") { dialog }
+      setup_message_handler
+      subscribe_to_scene
     end
 
-    # React to incoming dialog and decide whether to respond
-    #
-    # @param message_data [Hash] Incoming message data
-    # @return [Boolean] Whether the actor responded
-    def react_to(message_data)
-      # Don't react to own messages
-      return false if message_data[:from] == @character_name
-
-      # Add to conversation history
-      @conversation_history << {
-        speaker: message_data[:from],
-        line: message_data[:content],
-        timestamp: Time.now,
-      }
-
-      # Decide whether to respond based on context
-      if should_respond?(message_data)
-        debug_me("#{@character_name} deciding to respond to #{message_data[:from]}")
-
-        response = generate_dialog(
-          prompt_context: "Responding to #{message_data[:from]}: '#{message_data[:content]}'",
-        )
-
-        speak(response)
-        return true
+    # Unsubscribe from the scene channel before disconnecting.
+    def disconnect
+      if @bus && @scene_subscriber_id
+        @bus.unsubscribe(:scene, @scene_subscriber_id)
+        @scene_subscriber_id = nil
       end
-
-      false
+      super
     end
 
     private
 
     def validate_character_info!
       raise ArgumentError, "Character name is required" unless @character_name
-
-      debug_me("Validated character info for #{@character_name}")
     end
 
-    def setup_llm
-      # Initialize RubyLLM client with Ollama provider and gpt-oss model
-      # Can be overridden with environment variables:
-      #   RUBY_LLM_PROVIDER - provider name (default: ollama)
-      #   RUBY_LLM_MODEL - model name (default: gpt-oss)
-      #   OLLAMA_URL - Ollama server URL (default: http://localhost:11434)
-
-      provider = ENV["RUBY_LLM_PROVIDER"] || "ollama"
-      model = ENV["RUBY_LLM_MODEL"] || "gpt-oss"
-      base_url = ENV["OLLAMA_URL"] || "http://localhost:11434"
-
-      @llm = RubyLLM::Client.new(
-        provider: provider,
-        model: model,
-        base_url: base_url,
-        timeout: 120, # 2 minutes timeout for longer responses
-      )
-
-      debug_me("LLM setup complete for #{@character_name}") do
-        [provider, model, base_url]
-      end
+    def build_tools
+      [
+        SpeakTool.new(robot: self),
+        ReadMemoryTool.new(robot: self),
+        WriteMemoryTool.new(robot: self),
+        ListMemoryTool.new(robot: self),
+        MarkSceneCompleteTool.new(robot: self),
+      ]
     end
 
-    # Build the system prompt that defines the character
-    def build_system_prompt
-      <<~SYSTEM
-        You are #{@character_name}, a character in a comedic teen play.
-
-        CHARACTER PROFILE:
-        Name: #{@character_name}
-        Age: #{@character_info[:age] || 16}
-        Personality: #{@character_info[:personality]}
-        Voice Pattern: #{@character_info[:voice_pattern]}
-        Sport/Activity: #{@character_info[:sport]}
-
-        CURRENT CHARACTER ARC:
-        #{@character_info[:current_arc]}
-
-        RELATIONSHIPS:
-        #{format_relationships}
-
-        SCENE CONTEXT:
-        Scene: #{@scene_info[:scene_name]} (Scene #{@scene_info[:scene_number]})
-        Location: #{@scene_info[:location]}
-        Week: #{@scene_info[:week]} of the semester
-        Your Objective: #{@scene_info[:objectives]}
-        Other Characters Present: #{@scene_info[:characters]&.join(", ")}
-
-        INSTRUCTIONS:
-        - Stay completely in character
-        - Use your unique voice pattern consistently
-        - Respond naturally to other characters based on your relationships
-        - Keep dialog authentic to a teenager
-        - Include appropriate humor based on your personality
-        - React to the scene objectives and context
-        - Do not narrate actions, only speak dialog
-        - Keep responses concise (1-3 sentences typically)
-        - Use contractions and natural speech patterns
-
-        RESPONSE FORMAT:
-        Respond with ONLY the dialog your character would say. No quotation marks, no stage directions, no character name prefix. Just the words #{@character_name} would speak.
-      SYSTEM
+    # Build the context hash for the actor_system template.
+    # Maps character/scene data to template parameters.
+    def build_template_context
+      {
+        character_name:   @character_name,
+        age:              fetch_field(:age, ""),
+        personality:      extract_personality,
+        voice_pattern:    extract_voice_pattern,
+        background:       extract_background,
+        current_arc:      extract_current_arc,
+        relationships:    format_relationships,
+        scene_name:       fetch_field(:scene_name, "", from: @scene_info),
+        scene_number:     fetch_field(:scene_number, "", from: @scene_info),
+        location:         fetch_field(:location, "", from: @scene_info),
+        objectives:       extract_objectives,
+        characters_present: Array(fetch_field(:characters, [], from: @scene_info)).join(", "),
+        project_concept:  fetch_field(:concept, "", from: @scene_info),
+      }
     end
 
-    # Build the user prompt for the current situation
-    def build_user_prompt(additional_context = nil)
-      prompt = "CONVERSATION SO FAR:\n"
-
-      if @conversation_history.empty?
-        prompt += "(Scene just started - you may initiate conversation if appropriate)\n"
-      else
-        # Include last 10 exchanges for context
-        recent_history = @conversation_history.last(10)
-        recent_history.each do |exchange|
-          prompt += "#{exchange[:speaker]}: #{exchange[:line]}\n"
-        end
-      end
-
-      prompt += "\nADDITIONAL CONTEXT:\n#{additional_context}\n" if additional_context
-
-      prompt += "\nWhat does #{@character_name} say?"
-
-      prompt
+    # Fetch a field from a hash, trying symbol then string keys.
+    def fetch_field(key, default = nil, from: @character_info)
+      from[key.to_sym] || from[key.to_s] || default
     end
 
-    # Format relationship information for the prompt
+    # Extract personality from either top-level or body sections.
+    def extract_personality
+      personality = fetch_field(:personality)
+      return personality if personality
+
+      traits = @character_info[:traits] || @character_info["traits"]
+      return traits[:personality] || traits["personality"] if traits
+
+      ""
+    end
+
+    def extract_voice_pattern
+      fetch_field(:voice_pattern) || fetch_field(:speaking_style) || ""
+    end
+
+    def extract_background
+      fetch_field(:background) || ""
+    end
+
+    def extract_current_arc
+      fetch_field(:current_arc) || ""
+    end
+
+    def extract_objectives
+      objectives = fetch_field(:objectives, "", from: @scene_info)
+      objectives.is_a?(Array) ? objectives.join("; ") : objectives.to_s
+    end
+
     def format_relationships
-      return "No specific relationships defined" unless @character_info[:relationships]
+      rels = @character_info[:relationships] || @character_info["relationships"]
+      return "No specific relationships defined" unless rels
 
-      @character_info[:relationships].map do |person, status|
-        "- #{person}: #{status}"
-      end.join("\n")
-    end
-
-    # Extract dialog from LLM response
-    def extract_dialog(response)
-      # RubyLLM response handling - adjust based on actual gem API
-      dialog = if response.is_a?(String)
-          response
-        elsif response.respond_to?(:content)
-          response.content
-        elsif response.respond_to?(:text)
-          response.text
-        elsif response.is_a?(Hash) && response[:content]
-          response[:content]
-        else
-          response.to_s
-        end
-
-      # Clean up the dialog
-      dialog.strip
-            .gsub(/^["']|["']$/, "") # Remove surrounding quotes
-            .gsub(/^\w+:\s*/, "") # Remove character name prefix if present
-    end
-
-    # Subscribe to dialog messages via SmartMessage
-    def subscribe_to_dialog(channel, &block)
-      DialogMessage.subscribe(channel) do |message|
-        next unless message.scene == @scene_info[:scene_number]
-
-        message_data = {
-          from: message.from,
-          content: message.content,
-          scene: message.scene,
-          timestamp: message.timestamp,
-          emotion: message.emotion,
-          addressing: message.addressing,
-        }
-
-        block.call(message_data)
+      if rels.is_a?(Hash)
+        rels.map { |person, status| "- #{person}: #{status}" }.join("\n")
+      else
+        rels.to_s
       end
     end
 
-    # Decide whether to respond to a message
-    def should_respond?(message_data)
-      last_speaker = @conversation_history[-2]&.dig(:speaker)
+    # Reset the chat to a clean state using Robot's public update API.
+    # Prevents history corruption from tool-only LLM responses
+    # (empty text content blocks that Anthropic rejects).
+    def fresh_chat!
+      update(template: :actor_system, context: @actor_context)
+    end
 
-      # Always respond if directly addressed (name mentioned)
-      return true if message_data[:content].include?(@character_name)
+    def setup_message_handler
+      on_message do |message|
+        next if message.from == name
+        next if heartbeat_message?(message.content)
 
-      # Respond if it's your turn in conversation flow
-      # (last speaker wasn't you, and you haven't spoken recently)
-      return true if last_speaker != @character_name &&
-                     @conversation_history.last(3).count { |h| h[:speaker] == @character_name } < 2
+        @messages_processed += 1
+        @display&.incoming(name, message.from, message.content)
 
-      # Random chance to interject (10%)
-      return true if rand < 0.10
+        fresh_chat!
 
-      # Otherwise, listen
-      false
+        prompt = build_turn_prompt(message)
+
+        begin
+          run(prompt)
+        rescue => e
+          @display&.info("#{name} error processing message: #{e.message}")
+        end
+      end
+    end
+
+    # Build the prompt for this turn, including recent dialog history.
+    def build_turn_prompt(message)
+      lines = ["[#{message.from}]: #{message.content}"]
+
+      if @shared_memory
+        history = @shared_memory.get(:dialog_history) || []
+        recent = history.last(RECENT_DIALOG_LIMIT)
+
+        if recent.any?
+          lines << ""
+          lines << "[Recent dialog]"
+          recent.each do |entry|
+            emotion_tag = entry[:emotion] ? " [#{entry[:emotion]}]" : ""
+            lines << "#{entry[:from]}#{emotion_tag}: #{entry[:content]}"
+          end
+        end
+      end
+
+      lines.join("\n")
+    end
+
+    # Subscribe to the shared :scene channel so actors hear each other.
+    # RobotLab's super only subscribes to the actor's own named channel.
+    def subscribe_to_scene
+      return unless @bus
+
+      @scene_subscriber_id = @bus.subscribe(:scene) do |delivery|
+        send(:handle_incoming_delivery, delivery)
+      end
+    end
+
+    def heartbeat_message?(content)
+      content.to_s.start_with?("[ROOM STATUS]")
     end
   end
 end

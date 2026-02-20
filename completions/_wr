@@ -1,0 +1,222 @@
+#compdef wr
+# Zsh completion for wr (WritersRoom CLI)
+# Install: Copy to a directory in your $fpath (e.g., /usr/local/share/zsh/site-functions/)
+
+_wr() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_wr_commands' \
+        '*::arg:->args'
+
+    case $state in
+        args)
+            case $line[1] in
+                write)
+                    _wr_write
+                    ;;
+                character)
+                    _wr_character
+                    ;;
+                scene)
+                    _wr_scene
+                    ;;
+                init)
+                    _wr_init
+                    ;;
+                direct)
+                    _wr_direct
+                    ;;
+                actor)
+                    _wr_actor
+                    ;;
+                produce)
+                    _wr_produce
+                    ;;
+                help)
+                    _wr_help
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_wr_commands() {
+    local -a commands
+    commands=(
+        'actor:Run a single actor'
+        'character:Manage characters (create, list)'
+        'config:Show current configuration'
+        'direct:Direct a scene with multiple actors'
+        'help:Describe available commands'
+        'init:Initialize a new WritersRoom project'
+        'produce:Run a full production'
+        'report:Generate production report'
+        'scene:Manage scenes (create, list)'
+        'version:Show WritersRoom version'
+        'write:Writer tools (develop-concept, develop-character, etc.)'
+    )
+    _describe 'command' commands
+}
+
+_wr_write() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_wr_write_commands' \
+        '*::arg:->args'
+
+    case $state in
+        args)
+            case $line[1] in
+                develop-concept)
+                    _arguments \
+                        '--chat[Interactive chat mode with LLM]'
+                    ;;
+                develop-character)
+                    _arguments \
+                        '1:character name:' \
+                        '(-p --personality)'{-p,--personality}'[Basic personality description]:personality:' \
+                        '(-b --background)'{-b,--background}'[Background notes]:background:' \
+                        '--chat[Interactive chat mode with LLM]'
+                    ;;
+                create-arc)
+                    _arguments \
+                        '1:arc name:' \
+                        '(-d --description)'{-d,--description}'[Arc description]:description:' \
+                        '--chat[Interactive chat mode with LLM]'
+                    ;;
+                breakdown-scenes)
+                    _arguments \
+                        '1:arc name:_wr_arc_names' \
+                        '(-n --num-scenes)'{-n,--num-scenes}'[Number of scenes]:number:' \
+                        '--chat[Interactive chat mode with LLM]'
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_wr_write_commands() {
+    local -a commands
+    commands=(
+        'breakdown-scenes:Break down an arc into scene suggestions'
+        'create-arc:Create a story arc outline'
+        'develop-character:Create a detailed character profile'
+        'develop-concept:Develop the project concept'
+        'list-arcs:List all story arcs'
+    )
+    _describe 'write command' commands
+}
+
+_wr_character() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_wr_character_commands' \
+        '*::arg:->args'
+
+    case $state in
+        args)
+            case $line[1] in
+                create)
+                    _arguments \
+                        '1:character name:' \
+                        '(-p --personality)'{-p,--personality}'[Personality]:personality:' \
+                        '(-s --speaking-style)'{-s,--speaking-style}'[Speaking style]:style:' \
+                        '(-b --background)'{-b,--background}'[Background]:background:'
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_wr_character_commands() {
+    local -a commands
+    commands=(
+        'create:Create a new character'
+        'list:List all characters'
+    )
+    _describe 'character command' commands
+}
+
+_wr_scene() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments -C \
+        '1: :_wr_scene_commands' \
+        '*::arg:->args'
+
+    case $state in
+        args)
+            case $line[1] in
+                create)
+                    _arguments \
+                        '1:scene name:' \
+                        '(-d --description)'{-d,--description}'[Description]:description:' \
+                        '(-c --characters)'{-c,--characters}'[Characters]:characters:'
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_wr_scene_commands() {
+    local -a commands
+    commands=(
+        'create:Create a new scene'
+        'list:List all scenes'
+    )
+    _describe 'scene command' commands
+}
+
+_wr_init() {
+    _arguments \
+        '1:project name:' \
+        '(-p --provider)'{-p,--provider}'[LLM provider]:provider:(ollama openai anthropic)' \
+        '(-m --model)'{-m,--model}'[Model name]:model:' \
+        '(-c --concept)'{-c,--concept}'[Project concept]:concept:'
+}
+
+_wr_direct() {
+    _arguments \
+        '1:scene file:_files -g "*.yml"' \
+        '(-c --characters)'{-c,--characters}'[Character directory]:directory:_files -/' \
+        '(-o --output)'{-o,--output}'[Output file]:file:_files' \
+        '(-l --max-lines)'{-l,--max-lines}'[Max lines]:number:'
+}
+
+_wr_actor() {
+    _arguments \
+        '1:character file:_files -g "*.yml"' \
+        '2:scene file:_files -g "*.yml"' \
+        '(-r --channel)'{-r,--channel}'[Redis channel]:channel:'
+}
+
+_wr_produce() {
+    _arguments \
+        '*:scene files:_files -g "*.yml"' \
+        '(-l --max-lines)'{-l,--max-lines}'[Max lines per scene]:number:' \
+        '(-o --output)'{-o,--output}'[Output directory]:directory:_files -/' \
+        '--chat[Interactive chat mode]'
+}
+
+_wr_help() {
+    _arguments \
+        '1:command:_wr_commands'
+}
+
+# Helper function to get arc names from project.yml
+_wr_arc_names() {
+    local -a arcs
+    if [[ -f project.yml ]]; then
+        arcs=(${(f)"$(grep -A 1 '^  - name:' project.yml 2>/dev/null | grep 'name:' | sed 's/.*name: //')"})
+        _describe 'arc' arcs
+    fi
+}
+
+_wr "$@"

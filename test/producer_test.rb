@@ -9,8 +9,8 @@ class ProducerTest < Minitest::Test
     @temp_dir = Dir.mktmpdir("producer_test")
     @project_path = File.join(@temp_dir, "test_project")
 
-    # Create a basic project structure
-    WritersRoom::Config.create_project(@project_path)
+    # Create a basic project structure via Producer
+    WritersRoom::Producer.create_project(@project_path, name: "test_project")
     @producer = WritersRoom::Producer.new(@project_path)
   end
 
@@ -21,7 +21,6 @@ class ProducerTest < Minitest::Test
   def test_initializes_with_valid_project
     assert_instance_of WritersRoom::Producer, @producer
     assert_equal @project_path, @producer.project_path
-    assert_instance_of WritersRoom::Config, @producer.config
   end
 
   def test_raises_error_without_config
@@ -32,11 +31,11 @@ class ProducerTest < Minitest::Test
       WritersRoom::Producer.new(empty_dir)
     end
 
-    assert_match(/No config.yml found/, error.message)
+    assert_match(/No project found/, error.message)
   end
 
   def test_ensures_project_structure
-    required_dirs = %w[characters scenes transcripts logs]
+    required_dirs = %w[characters scenes transcripts arcs]
 
     required_dirs.each do |dir|
       assert Dir.exist?(File.join(@project_path, dir)),
@@ -69,9 +68,10 @@ class ProducerTest < Minitest::Test
     )
 
     assert File.exist?(character_file)
-    assert_match(/alice\.yml$/, character_file)
+    assert_match(/alice\.md$/, character_file)
 
-    data = YAML.load_file(character_file)
+    parsed = WritersRoom::FrontMatter.load_file(character_file, symbolize_keys: false)
+    data = parsed[:metadata]
     assert_equal "Alice", data["name"]
     assert_equal "cheerful", data["traits"]["personality"]
     assert_equal "casual", data["traits"]["speaking_style"]
@@ -83,7 +83,8 @@ class ProducerTest < Minitest::Test
 
     assert File.exist?(character_file)
 
-    data = YAML.load_file(character_file)
+    parsed = WritersRoom::FrontMatter.load_file(character_file, symbolize_keys: false)
+    data = parsed[:metadata]
     assert_equal "Bob", data["name"]
     assert_equal "neutral", data["traits"]["personality"]
     assert_equal "conversational", data["traits"]["speaking_style"]
@@ -107,9 +108,10 @@ class ProducerTest < Minitest::Test
     )
 
     assert File.exist?(scene_file)
-    assert_match(/coffee_shop\.yml$/, scene_file)
+    assert_match(/coffee_shop\.md$/, scene_file)
 
-    data = YAML.load_file(scene_file)
+    parsed = WritersRoom::FrontMatter.load_file(scene_file, symbolize_keys: false)
+    data = parsed[:metadata]
     assert_equal "Coffee Shop", data["scene_name"]
     assert_equal "A busy coffee shop conversation", data["description"]
     assert_equal ["Alice", "Bob"], data["characters"]
@@ -178,6 +180,7 @@ class ProducerTest < Minitest::Test
     transcript_file = File.join(transcripts_dir, "scene1.txt")
 
     File.write(transcript_file, <<~TRANSCRIPT)
+      ---
       Alice: Hello, how are you?
       Bob: I'm doing well, thanks!
       Alice: That's great to hear.
@@ -195,6 +198,24 @@ class ProducerTest < Minitest::Test
   def test_sanitize_filename
     # Test via create_character since sanitize_filename is private
     character_file = @producer.create_character("Alice O'Brien")
-    assert_match(/alice_o_brien\.yml$/, character_file)
+    assert_match(/alice_o_brien\.md$/, character_file)
+  end
+
+  def test_create_project_creates_md_metadata
+    # Verify that create_project creates project.md not project.yml
+    assert File.exist?(File.join(@project_path, "project.md")),
+           "Expected project.md to exist"
+  end
+
+  def test_list_characters_ignores_non_md_files
+    # Non-.md files should not appear in character listings
+    characters_dir = File.join(@project_path, "characters")
+    yml_file = File.join(characters_dir, "stray.yml")
+    File.write(yml_file, "name: Stray")
+
+    @producer.create_character("Alice")
+    characters = @producer.list_characters
+    assert_equal 1, characters.count
+    assert_equal "Alice", characters.first[:name]
   end
 end

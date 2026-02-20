@@ -1,0 +1,37 @@
+id: radio_play
+label: Radio Play
+universal_elements:
+  - story
+  - theme
+  - characters
+  - arcs
+  - conflict
+  - setting
+specific_elements:
+  episodes:
+    dir: episodes
+    singular: episode
+    plural: episodes
+  scenes:
+    dir: scenes
+    singular: scene
+    plural: scenes
+scaffolded_dirs:
+  - characters
+  - arcs
+  - settings
+  - episodes
+  - scenes
+  - transcripts
+  - sound_design
+workflows:
+  - outlining
+  - drafting
+  - revision
+  - sound_design
+  - final
+statuses:
+  - outline
+  - draft
+  - revision
+  - final

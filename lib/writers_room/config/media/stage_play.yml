@@ -1,0 +1,36 @@
+id: stage_play
+label: Stage Play
+universal_elements:
+  - story
+  - theme
+  - characters
+  - arcs
+  - conflict
+  - setting
+specific_elements:
+  acts:
+    dir: acts
+    singular: act
+    plural: acts
+  scenes:
+    dir: scenes
+    singular: scene
+    plural: scenes
+scaffolded_dirs:
+  - characters
+  - arcs
+  - settings
+  - acts
+  - scenes
+  - transcripts
+workflows:
+  - outlining
+  - drafting
+  - revision
+  - table_read
+  - final
+statuses:
+  - outline
+  - draft
+  - revision
+  - final

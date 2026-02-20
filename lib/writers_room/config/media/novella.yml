@@ -1,0 +1,40 @@
+id: novella
+label: Novella
+universal_elements:
+  - story
+  - theme
+  - genre
+  - tone_mood
+  - characters
+  - relationships
+  - arcs
+  - conflict
+  - setting
+  - locations
+  - point_of_view
+  - backstory
+specific_elements:
+  chapters:
+    dir: chapters
+    singular: chapter
+    plural: chapters
+scaffolded_dirs:
+  - characters
+  - relationships
+  - arcs
+  - settings
+  - locations
+  - backstory
+  - chapters
+  - drafts
+  - transcripts
+workflows:
+  - outlining
+  - drafting
+  - revision
+  - final
+statuses:
+  - outline
+  - draft
+  - revision
+  - final

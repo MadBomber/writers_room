@@ -8,9 +8,14 @@ module WritersRoom
     autoload :Character, "writers_room/cli/character"
     autoload :Scene, "writers_room/cli/scene"
     autoload :Write, "writers_room/cli/write"
+    autoload :Bible, "writers_room/cli/bible"
+    autoload :Export, "writers_room/cli/export"
   end
 
   class CLI < Thor
+    package_name "wr"
+    namespace "wr"
+
     # Global class options
     class_option :help,
                  type: :boolean,
@@ -26,8 +31,8 @@ module WritersRoom
       true
     end
 
-    # Show help when no command is given
-    default_task :help
+    # Running bare `wr` starts context-aware interactive chat
+    default_task :chat
 
     # Handle global options
     def initialize(*args)
@@ -64,6 +69,12 @@ module WritersRoom
       end
     end
 
+    desc "chat", "Start a context-aware interactive writing session (default command)"
+    def chat
+      require_relative "cli/chat"
+      Commands::Chat.new.chat
+    end
+
     desc "version", "Show WritersRoom version"
     def version
       require_relative "cli/version"
@@ -86,6 +97,12 @@ module WritersRoom
                   type: :string,
                   default: "",
                   desc: "Project concept/summary"
+    method_option :medium,
+                  type: :string,
+                  desc: "Medium type (dialog, novel, novella, short_story, screenplay, stage_play, tv_series, radio_play, documentary)"
+    method_option :source_material,
+                  type: :string,
+                  desc: "Path to source material (another project or files)"
     def init(project_name)
       require_relative "cli/init"
       Commands::Init.new([], options).init(project_name)
@@ -95,17 +112,6 @@ module WritersRoom
     def config
       require_relative "cli/config"
       Commands::Config.new.config
-    end
-
-    desc "actor CHARACTER_FILE SCENE_FILE", "Run a single actor"
-    method_option :channel,
-                  aliases: "-r",
-                  type: :string,
-                  default: "writers_room:dialog",
-                  desc: "Redis channel"
-    def actor(character_file, scene_file)
-      require_relative "cli/actor"
-      Commands::Actor.new([], options).actor(character_file, scene_file)
     end
 
     desc "direct SCENE_FILE", "Direct a scene with multiple actors"
@@ -159,6 +165,42 @@ module WritersRoom
     def report
       require_relative "cli/report"
       Commands::Report.new.report
+    end
+
+    desc "bible SUBCOMMAND", "Story bible management (regenerate, show, search)"
+    subcommand "bible", Commands::Bible
+
+    desc "status", "Show project state and next steps"
+    def status
+      context = WritersRoom::ContextDetector.new.detect
+
+      unless context.in_project?
+        say "Not inside a WritersRoom project.", :yellow
+        say "Run 'wr init PROJECT_NAME' to create one.", :white
+        return
+      end
+
+      state = context.project_state
+      say state.summary
+
+      workflow = WritersRoom::Workflow.new(context.medium)
+      steps = workflow.next_steps(context.project_path)
+      if steps.any?
+        say "\nNext steps:", :cyan
+        steps.each { |s| say "  - #{s}", :white }
+      end
+    end
+
+    desc "export SUBCOMMAND", "Export project (manuscript, bible, references)"
+    subcommand "export", Commands::Export
+
+    # Register dynamic element subcommands for common types.
+    # These work for any medium -- the element command reads from the
+    # appropriate directory relative to CWD or --project.
+    %w[chapter arc location setting relationship theme].each do |type|
+      require_relative "cli/element"
+      desc "#{type} SUBCOMMAND", "Manage #{type}s (create, list, show, version, status)"
+      subcommand type, Commands::Element.for_type(type)
     end
   end
 end

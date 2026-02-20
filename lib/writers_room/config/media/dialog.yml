@@ -1,0 +1,27 @@
+id: dialog
+label: Dialog Generation
+universal_elements:
+  - characters
+  - arcs
+  - story
+specific_elements:
+  scenes:
+    dir: scenes
+    singular: scene
+    plural: scenes
+scaffolded_dirs:
+  - characters
+  - scenes
+  - transcripts
+  - arcs
+workflows:
+  - develop_concept
+  - develop_characters
+  - create_arcs
+  - breakdown_scenes
+  - direct
+  - produce
+statuses:
+  - outline
+  - draft
+  - final
