@@ -533,6 +533,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Create a Project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-media-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Media Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -547,10 +575,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-characters-and-scenes" class="md-nav__link">
+  <a href="#create-story-elements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Create Characters and Scenes
+        Create Story Elements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#story-bible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Story Bible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-chat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Chat
       
     </span>
   </a>
@@ -584,6 +645,17 @@
     <span class="md-ellipsis">
       
         Generate a Report
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export
       
     </span>
   </a>
@@ -963,6 +1035,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Create a Project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-media-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Media Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -977,10 +1077,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-characters-and-scenes" class="md-nav__link">
+  <a href="#create-story-elements" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Create Characters and Scenes
+        Create Story Elements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#story-bible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Story Bible
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-chat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Chat
       
     </span>
   </a>
@@ -1014,6 +1147,17 @@
     <span class="md-ellipsis">
       
         Generate a Report
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export
       
     </span>
   </a>
@@ -1134,17 +1278,66 @@
 </span></code></pre></div>
 <p>To use OpenAI or Anthropic instead, see <a href="../configuration/">Configuration</a>.</p>
 <h2 id="create-a-project">Create a Project<a class="headerlink" href="#create-a-project" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>wr<span class="w"> </span>init<span class="w"> </span>my_show<span class="w"> </span>--concept<span class="w"> </span><span class="s2">&quot;A comedy about two rival chefs&quot;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>my_show
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>wr<span class="w"> </span>init<span class="w"> </span>my_novella<span class="w"> </span>--medium<span class="w"> </span>novella<span class="w"> </span>--concept<span class="w"> </span><span class="s2">&quot;A detective retires, then a letter arrives&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>my_novella
 </span></code></pre></div>
-<p>This creates:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>my_show/
+<p>If you omit <code>--medium</code>, an interactive menu lists available media types. Each medium scaffolds directories and workflows suited to that format.</p>
+<h3 id="available-media-types">Available Media Types<a class="headerlink" href="#available-media-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Medium</th>
+<th>Directories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dialog</td>
+<td>characters, scenes, transcripts, arcs</td>
+</tr>
+<tr>
+<td>documentary</td>
+<td>research, timeline, segments, interviews, transcripts, sources</td>
+</tr>
+<tr>
+<td>novel</td>
+<td>characters, relationships, arcs, settings, locations, research, timeline, backstory, chapters, parts, transcripts</td>
+</tr>
+<tr>
+<td>novella</td>
+<td>characters, relationships, arcs, settings, locations, backstory, chapters, drafts, transcripts</td>
+</tr>
+<tr>
+<td>radio_play</td>
+<td>characters, arcs, settings, episodes, scenes, transcripts, sound_design</td>
+</tr>
+<tr>
+<td>screenplay</td>
+<td>characters, arcs, settings, locations, acts, sequences, scenes, transcripts</td>
+</tr>
+<tr>
+<td>short_story</td>
+<td>characters, settings, scenes, drafts, transcripts</td>
+</tr>
+<tr>
+<td>stage_play</td>
+<td>characters, arcs, settings, acts, scenes, transcripts</td>
+</tr>
+<tr>
+<td>tv_series</td>
+<td>characters, arcs, settings, locations, seasons, episodes, scenes, transcripts</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-gets-created">What Gets Created<a class="headerlink" href="#what-gets-created" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>my_novella/
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  config.yml          # LLM provider and model settings
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  project.md          # Project metadata and concept
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  characters/         # Character markdown files
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  scenes/             # Scene markdown files
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  transcripts/        # Generated dialog transcripts
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  arcs/               # Story arc outlines
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  project.md          # Project metadata (name, concept, medium)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  story_bible.yml     # Auto-generated element index
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  characters/         # Character files
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  chapters/           # Chapter files
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  arcs/               # Story arcs
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  ...                 # Other dirs based on medium
 </span></code></pre></div>
 <p>All project files except <code>config.yml</code> are markdown with YAML front matter.</p>
 <h2 id="develop-your-story">Develop Your Story<a class="headerlink" href="#develop-your-story" title="Permanent link">&para;</a></h2>
@@ -1153,41 +1346,74 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>wr<span class="w"> </span>write<span class="w"> </span>develop-concept
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Develop a character profile</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>wr<span class="w"> </span>write<span class="w"> </span>develop-character<span class="w"> </span><span class="s2">&quot;Chef Marco&quot;</span><span class="w"> </span>--personality<span class="w"> </span><span class="s2">&quot;fiery Italian perfectionist&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>wr<span class="w"> </span>write<span class="w"> </span>develop-character<span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="w"> </span>--personality<span class="w"> </span><span class="s2">&quot;retired detective, sharp but weary&quot;</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Create a story arc</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>wr<span class="w"> </span>write<span class="w"> </span>create-arc<span class="w"> </span><span class="s2">&quot;Act 1&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;The rival chefs are forced to share a kitchen&quot;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>wr<span class="w"> </span>write<span class="w"> </span>create-arc<span class="w"> </span><span class="s2">&quot;Act 1&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;The letter changes everything&quot;</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># Break down the arc into scenes</span>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>wr<span class="w"> </span>write<span class="w"> </span>breakdown-scenes<span class="w"> </span><span class="s2">&quot;Act 1&quot;</span><span class="w"> </span>--num-scenes<span class="w"> </span><span class="m">5</span>
 </span></code></pre></div>
 <p>All writer commands support <code>--chat</code> for interactive conversation with the LLM.</p>
-<h2 id="create-characters-and-scenes">Create Characters and Scenes<a class="headerlink" href="#create-characters-and-scenes" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Create character files</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>wr<span class="w"> </span>character<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Chef Marco&quot;</span><span class="w"> </span>--personality<span class="w"> </span><span class="s2">&quot;perfectionist&quot;</span><span class="w"> </span>--speaking-style<span class="w"> </span><span class="s2">&quot;passionate&quot;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>wr<span class="w"> </span>character<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Chef Luna&quot;</span><span class="w"> </span>--personality<span class="w"> </span><span class="s2">&quot;innovative&quot;</span><span class="w"> </span>--speaking-style<span class="w"> </span><span class="s2">&quot;calm and precise&quot;</span>
+<h2 id="create-story-elements">Create Story Elements<a class="headerlink" href="#create-story-elements" title="Permanent link">&para;</a></h2>
+<p>WritersRoom provides universal CRUD commands for all element types. Each supports <code>create</code>, <code>list</code>, <code>show</code>, <code>version</code>, and <code>status</code>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Characters</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>wr<span class="w"> </span>character<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Alice Morgan&quot;</span><span class="w"> </span>--personality<span class="w"> </span><span class="s2">&quot;curious&quot;</span><span class="w"> </span>--speaking-style<span class="w"> </span><span class="s2">&quot;formal&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>wr<span class="w"> </span>character<span class="w"> </span>list
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Create a scene</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>wr<span class="w"> </span>scene<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Kitchen Clash&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;First day sharing the kitchen&quot;</span><span class="w"> </span>--characters<span class="w"> </span>Marco<span class="w"> </span>Luna
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Chapters (novel/novella)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>wr<span class="w"> </span>chapter<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;The Letter&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Alice finds a mysterious letter.&quot;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>wr<span class="w"> </span>chapter<span class="w"> </span>show<span class="w"> </span>the_letter
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>wr<span class="w"> </span>chapter<span class="w"> </span>version<span class="w"> </span>the_letter<span class="w">           </span><span class="c1"># create a versioned snapshot</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>wr<span class="w"> </span>chapter<span class="w"> </span>status<span class="w"> </span>the_letter<span class="w"> </span>revision<span class="w">   </span><span class="c1"># update status</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># Scenes</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>wr<span class="w"> </span>scene<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Opening&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;A quiet morning&quot;</span><span class="w"> </span>--characters<span class="w"> </span>alice_morgan
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>wr<span class="w"> </span>scene<span class="w"> </span>list
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="c1"># Other element types</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>wr<span class="w"> </span>arc<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Main Arc&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;The central conflict&quot;</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>wr<span class="w"> </span>location<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;The Study&quot;</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>wr<span class="w"> </span>setting<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Victorian London&quot;</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>wr<span class="w"> </span>relationship<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Alice and Bob&quot;</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>wr<span class="w"> </span>theme<span class="w"> </span>create<span class="w"> </span><span class="s2">&quot;Identity&quot;</span>
 </span></code></pre></div>
+<h2 id="story-bible">Story Bible<a class="headerlink" href="#story-bible" title="Permanent link">&para;</a></h2>
+<p>The story bible is an auto-generated index mapping slugs and aliases to files.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>wr<span class="w"> </span>bible<span class="w"> </span>regenerate<span class="w">     </span><span class="c1"># rebuild from project files</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>wr<span class="w"> </span>bible<span class="w"> </span>show<span class="w">           </span><span class="c1"># display all indexed elements</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>wr<span class="w"> </span>bible<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="w"> </span><span class="c1"># find by name, slug, or substring</span>
+</span></code></pre></div>
+<h2 id="project-status">Project Status<a class="headerlink" href="#project-status" title="Permanent link">&para;</a></h2>
+<p>Check your project's state and get suggested next steps:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>wr<span class="w"> </span>status
+</span></code></pre></div>
+<h2 id="interactive-chat">Interactive Chat<a class="headerlink" href="#interactive-chat" title="Permanent link">&para;</a></h2>
+<p>Run bare <code>wr</code> (no subcommand) to start a context-aware interactive writing session:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>wr
+</span></code></pre></div>
+<p>The chat is aware of your project, medium type, and current working directory.</p>
 <h2 id="direct-a-scene">Direct a Scene<a class="headerlink" href="#direct-a-scene" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>wr<span class="w"> </span>direct<span class="w"> </span>scenes/kitchen_clash.md
+<p>For dialog-oriented media, direct scenes with LLM-powered actors:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>wr<span class="w"> </span>direct<span class="w"> </span>scenes/opening.md<span class="w"> </span>--max-lines<span class="w"> </span><span class="m">30</span>
 </span></code></pre></div>
-<p>Each character maintains its own personality and voice throughout the dialog. The scene ends when the line limit is reached or the timeout expires.</p>
+<p>Each character maintains its own personality and voice throughout the dialog.</p>
 <h2 id="run-a-full-production">Run a Full Production<a class="headerlink" href="#run-a-full-production" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Produce all scenes in the project</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>wr<span class="w"> </span>produce
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Or produce specific scenes</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>wr<span class="w"> </span>produce<span class="w"> </span>scenes/kitchen_clash.md<span class="w"> </span>scenes/taste_test.md
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Interactive chat mode for production planning</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>wr<span class="w"> </span>produce<span class="w"> </span>--chat
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Produce all scenes in the project</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>wr<span class="w"> </span>produce
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Interactive chat mode for production planning</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>wr<span class="w"> </span>produce<span class="w"> </span>--chat
 </span></code></pre></div>
 <h2 id="generate-a-report">Generate a Report<a class="headerlink" href="#generate-a-report" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>wr<span class="w"> </span>report
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>wr<span class="w"> </span>report
 </span></code></pre></div>
 <p>Summarizes all transcripts with line counts per character and scene statistics.</p>
+<h2 id="export">Export<a class="headerlink" href="#export" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>manuscript<span class="w">    </span><span class="c1"># formatted manuscript (adapts to medium)</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>bible<span class="w">         </span><span class="c1"># story bible as markdown</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>references<span class="w">    </span><span class="c1"># cross-reference graph</span>
+</span></code></pre></div>
 <h2 id="customizing-prompts">Customizing Prompts<a class="headerlink" href="#customizing-prompts" title="Permanent link">&para;</a></h2>
 <p>WritersRoom ships with default LLM prompt templates. To customize how
 characters behave or how the writer tools generate content, create a
@@ -1212,7 +1438,7 @@ characters behave or how the writer tools generate content, create a
 </ul>
 <p><strong>"No project found"</strong></p>
 <ul>
-<li>Run commands from inside a project directory (one containing <code>config.yml</code> or <code>project.md</code>)</li>
+<li>Run commands from inside a project directory (one containing <code>project.md</code>)</li>
 <li>Or create a new project with <code>wr init</code></li>
 </ul>
 

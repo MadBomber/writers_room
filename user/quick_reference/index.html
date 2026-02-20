@@ -621,10 +621,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#character-management" class="md-nav__link">
+  <a href="#element-management" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Character Management
+        Element Management
       
     </span>
   </a>
@@ -632,10 +632,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#scene-management" class="md-nav__link">
+  <a href="#story-bible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scene Management
+        Story Bible
       
     </span>
   </a>
@@ -647,6 +647,17 @@
     <span class="md-ellipsis">
       
         Directing and Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export
       
     </span>
   </a>
@@ -984,10 +995,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#character-management" class="md-nav__link">
+  <a href="#element-management" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Character Management
+        Element Management
       
     </span>
   </a>
@@ -995,10 +1006,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#scene-management" class="md-nav__link">
+  <a href="#story-bible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Scene Management
+        Story Bible
       
     </span>
   </a>
@@ -1010,6 +1021,17 @@
     <span class="md-ellipsis">
       
         Directing and Production
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Export
       
     </span>
   </a>
@@ -1160,43 +1182,66 @@
 <h1 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h1>
 <h2 id="cli-commands">CLI Commands<a class="headerlink" href="#cli-commands" title="Permanent link">&para;</a></h2>
 <h3 id="project-setup">Project Setup<a class="headerlink" href="#project-setup" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>wr<span class="w"> </span>init<span class="w"> </span>PROJECT_NAME<span class="w"> </span><span class="o">[</span>--provider<span class="w"> </span>PROVIDER<span class="o">]</span><span class="w"> </span><span class="o">[</span>--model<span class="w"> </span>MODEL<span class="o">]</span><span class="w"> </span><span class="o">[</span>--concept<span class="w"> </span>CONCEPT<span class="o">]</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>wr<span class="w"> </span>config
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>wr<span class="w"> </span>version
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>wr<span class="w"> </span><span class="nb">help</span><span class="w"> </span><span class="o">[</span>COMMAND<span class="o">]</span><span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>wr<span class="w"> </span>init<span class="w"> </span>PROJECT_NAME<span class="w"> </span><span class="o">[</span>--medium<span class="w"> </span>MEDIUM<span class="o">]</span><span class="w"> </span><span class="o">[</span>--provider<span class="w"> </span>PROVIDER<span class="o">]</span><span class="w"> </span><span class="o">[</span>--model<span class="w"> </span>MODEL<span class="o">]</span><span class="w"> </span><span class="o">[</span>--concept<span class="w"> </span>CONCEPT<span class="o">]</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>wr<span class="w"> </span>status<span class="w">                 </span><span class="c1"># project state and next steps</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>wr<span class="w"> </span>config<span class="w">                 </span><span class="c1"># resolved LLM configuration</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>wr<span class="w"> </span>version<span class="w">                </span><span class="c1"># gem version</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>wr<span class="w"> </span>tree<span class="w">                   </span><span class="c1"># full command tree</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>wr<span class="w">                        </span><span class="c1"># start interactive chat (default command)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>wr<span class="w"> </span><span class="nb">help</span><span class="w"> </span><span class="o">[</span>COMMAND<span class="o">]</span><span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
 <h3 id="writer-tools">Writer Tools<a class="headerlink" href="#writer-tools" title="Permanent link">&para;</a></h3>
+<p>LLM-assisted content development. Add <code>--chat</code> for interactive mode.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wr<span class="w"> </span>write<span class="w"> </span>develop-concept<span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>wr<span class="w"> </span>write<span class="w"> </span>develop-character<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--personality<span class="w"> </span>PERSONALITY<span class="o">]</span><span class="w"> </span><span class="o">[</span>--background<span class="w"> </span>BACKGROUND<span class="o">]</span><span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>wr<span class="w"> </span>write<span class="w"> </span>create-arc<span class="w"> </span>NAME<span class="w"> </span>--description<span class="w"> </span>DESCRIPTION<span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>wr<span class="w"> </span>write<span class="w"> </span>breakdown-scenes<span class="w"> </span>ARC_NAME<span class="w"> </span><span class="o">[</span>--num-scenes<span class="w"> </span>NUM_SCENES<span class="o">]</span><span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>wr<span class="w"> </span>write<span class="w"> </span>list-arcs
 </span></code></pre></div>
-<h3 id="character-management">Character Management<a class="headerlink" href="#character-management" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>wr<span class="w"> </span>character<span class="w"> </span>create<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--personality<span class="w"> </span>PERSONALITY<span class="o">]</span><span class="w"> </span><span class="o">[</span>--speaking-style<span class="w"> </span>STYLE<span class="o">]</span><span class="w"> </span><span class="o">[</span>--background<span class="w"> </span>BACKGROUND<span class="o">]</span>
+<h3 id="element-management">Element Management<a class="headerlink" href="#element-management" title="Permanent link">&para;</a></h3>
+<p>Universal CRUD for any element type. Each supports <code>create</code>, <code>list</code>, <code>show</code>, <code>version</code>, and <code>status</code>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>wr<span class="w"> </span>character<span class="w"> </span>create<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--personality<span class="w"> </span>P<span class="o">]</span><span class="w"> </span><span class="o">[</span>--speaking-style<span class="w"> </span>S<span class="o">]</span><span class="w"> </span><span class="o">[</span>--background<span class="w"> </span>B<span class="o">]</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>wr<span class="w"> </span>character<span class="w"> </span>list
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>wr<span class="w"> </span>scene<span class="w"> </span>create<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>D<span class="o">]</span><span class="w"> </span><span class="o">[</span>--characters<span class="w"> </span>CHAR1<span class="w"> </span>CHAR2<span class="w"> </span>...<span class="o">]</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>wr<span class="w"> </span>scene<span class="w"> </span>list
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>wr<span class="w"> </span>chapter<span class="w"> </span>create<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--body<span class="w"> </span>BODY<span class="o">]</span><span class="w"> </span><span class="o">[</span>--status<span class="w"> </span>STATUS<span class="o">]</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>wr<span class="w"> </span>chapter<span class="w"> </span>list
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>wr<span class="w"> </span>chapter<span class="w"> </span>show<span class="w"> </span>SLUG
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>wr<span class="w"> </span>chapter<span class="w"> </span>version<span class="w"> </span>SLUG<span class="w">           </span><span class="c1"># create versioned snapshot</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>wr<span class="w"> </span>chapter<span class="w"> </span>status<span class="w"> </span>SLUG<span class="w"> </span>NEW_STATUS<span class="w"> </span><span class="c1"># update status</span>
 </span></code></pre></div>
-<h3 id="scene-management">Scene Management<a class="headerlink" href="#scene-management" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>wr<span class="w"> </span>scene<span class="w"> </span>create<span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>DESCRIPTION<span class="o">]</span><span class="w"> </span><span class="o">[</span>--characters<span class="w"> </span>CHAR1<span class="w"> </span>CHAR2<span class="w"> </span>...<span class="o">]</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>wr<span class="w"> </span>scene<span class="w"> </span>list
+<p>Also available: <code>arc</code>, <code>location</code>, <code>setting</code>, <code>relationship</code>, <code>theme</code> -- all with the same subcommands.</p>
+<h3 id="story-bible">Story Bible<a class="headerlink" href="#story-bible" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>wr<span class="w"> </span>bible<span class="w"> </span>regenerate<span class="w">     </span><span class="c1"># rebuild from project files</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>wr<span class="w"> </span>bible<span class="w"> </span>show<span class="w">           </span><span class="c1"># display all indexed elements</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>wr<span class="w"> </span>bible<span class="w"> </span>search<span class="w"> </span>TERM<span class="w">    </span><span class="c1"># find by name, slug, or substring</span>
 </span></code></pre></div>
 <h3 id="directing-and-production">Directing and Production<a class="headerlink" href="#directing-and-production" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>wr<span class="w"> </span>direct<span class="w"> </span>SCENE_FILE<span class="w"> </span><span class="o">[</span>--characters<span class="w"> </span>CHARACTER_DIR<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>OUTPUT_FILE<span class="o">]</span><span class="w"> </span><span class="o">[</span>--max-lines<span class="w"> </span>MAX_LINES<span class="o">]</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>wr<span class="w"> </span>produce<span class="w"> </span><span class="o">[</span>SCENE_FILES...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--max-lines<span class="w"> </span>MAX_LINES<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>OUTPUT_DIR<span class="o">]</span><span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>wr<span class="w"> </span>report
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>wr<span class="w"> </span>direct<span class="w"> </span>SCENE_FILE<span class="w"> </span><span class="o">[</span>--characters<span class="w"> </span>DIR<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>FILE<span class="o">]</span><span class="w"> </span><span class="o">[</span>--max-lines<span class="w"> </span>N<span class="o">]</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>wr<span class="w"> </span>produce<span class="w"> </span><span class="o">[</span>SCENE_FILES...<span class="o">]</span><span class="w"> </span><span class="o">[</span>--max-lines<span class="w"> </span>N<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>DIR<span class="o">]</span><span class="w"> </span><span class="o">[</span>--chat<span class="o">]</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>wr<span class="w"> </span>report<span class="w">               </span><span class="c1"># summarize all transcripts</span>
+</span></code></pre></div>
+<h3 id="export">Export<a class="headerlink" href="#export" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>manuscript<span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>FILE<span class="o">]</span><span class="w">    </span><span class="c1"># formatted manuscript (adapts to medium)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>bible<span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>FILE<span class="o">]</span><span class="w">         </span><span class="c1"># story bible as markdown</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>wr<span class="w"> </span><span class="nb">export</span><span class="w"> </span>references<span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>FILE<span class="o">]</span><span class="w">    </span><span class="c1"># cross-reference graph</span>
 </span></code></pre></div>
 <h2 id="recommended-workflow">Recommended Workflow<a class="headerlink" href="#recommended-workflow" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a> 1. wr init my_project --concept &quot;your concept&quot;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a> 2. cd my_project
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a> 3. wr write develop-concept --chat
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a> 4. wr write develop-character &lt;name&gt; --chat
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a> 5. wr write create-arc &lt;name&gt; --description &quot;description&quot;
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a> 6. wr write breakdown-scenes &lt;arc_name&gt;
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a> 7. wr character create &lt;name&gt; --personality &quot;personality&quot; --speaking-style &quot;style&quot;
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a> 8. wr scene create &lt;name&gt; --description &quot;description&quot; --characters Char1 Char2
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a> 9. wr direct scenes/&lt;scene&gt;.md
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>10. wr produce
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>11. wr report
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a> 1. wr init my_project --medium novella --concept &quot;your concept&quot;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a> 2. cd my_project
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a> 3. wr write develop-concept --chat
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a> 4. wr write develop-character &lt;name&gt; --chat
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a> 5. wr character create &lt;name&gt; --personality &quot;...&quot; --speaking-style &quot;...&quot;
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a> 6. wr write create-arc &lt;name&gt; --description &quot;...&quot;
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a> 7. wr write breakdown-scenes &lt;arc_name&gt;
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a> 8. wr chapter create &lt;name&gt; --body &quot;...&quot;
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a> 9. wr scene create &lt;name&gt; --description &quot;...&quot; --characters Char1 Char2
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>10. wr direct scenes/&lt;scene&gt;.md
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>11. wr produce
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>12. wr report
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>13. wr export manuscript
 </span></code></pre></div>
 <h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
 <table>
@@ -1256,34 +1301,44 @@
 </tbody>
 </table>
 <h2 id="project-directory-structure">Project Directory Structure<a class="headerlink" href="#project-directory-structure" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>my_project/
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  config.yml        # Provider and model settings (only YAML file)
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  project.md        # Metadata, concept, story arcs
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  characters/       # Character files (.md with front matter)
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  scenes/           # Scene files (.md with front matter)
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  transcripts/      # Generated transcripts (.md with front matter)
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  arcs/             # Arc outlines and breakdowns (.md with front matter)
+<p>Structure varies by medium. A novella project:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>my_novella/
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  config.yml          # Provider and model settings (only YAML file)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  project.md          # Metadata: name, concept, medium
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  story_bible.yml     # Auto-generated element index
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  characters/         # Character files (.md with front matter)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  relationships/
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  arcs/
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  settings/
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  locations/
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  backstory/
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  chapters/           # Chapter files (.md with front matter)
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  drafts/
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>  transcripts/
 </span></code></pre></div>
 <h2 id="provider-quick-switch">Provider Quick Switch<a class="headerlink" href="#provider-quick-switch" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Ollama (default, no API key needed)</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>ollama<span class="w"> </span>serve<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ollama<span class="w"> </span>pull<span class="w"> </span>gpt-oss:20b
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># OpenAI</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_PROVIDER</span><span class="o">=</span>openai
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_MODEL_NAME</span><span class="o">=</span>gpt-4
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-...
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># Anthropic</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_PROVIDER</span><span class="o">=</span>anthropic
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_MODEL_NAME</span><span class="o">=</span>claude-sonnet-4-20250514
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-...
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Ollama (default, no API key needed)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ollama<span class="w"> </span>serve<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>ollama<span class="w"> </span>pull<span class="w"> </span>gpt-oss:20b
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># OpenAI</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_PROVIDER</span><span class="o">=</span>openai
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_MODEL_NAME</span><span class="o">=</span>gpt-4
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-...
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Anthropic</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_PROVIDER</span><span class="o">=</span>anthropic
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">WRITERS_ROOM_MODEL_NAME</span><span class="o">=</span>claude-sonnet-4-20250514
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-...
 </span></code></pre></div>
 <h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>
 <ul>
+<li>Use <code>--medium</code> with <code>wr init</code> to skip the interactive medium picker</li>
 <li>Use <code>--max-lines 20</code> for quick test runs</li>
 <li>Use <code>--chat</code> on any write command for interactive LLM conversation</li>
 <li>Enable <code>DEBUG_ME=1</code> if scenes aren't producing output</li>
 <li>Press Ctrl+C to stop a scene and save the transcript</li>
+<li>Run <code>wr bible regenerate</code> after adding elements to keep the index current</li>
+<li>Run <code>wr status</code> to see project state and suggested next steps</li>
 </ul>
 
 

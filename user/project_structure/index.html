@@ -575,11 +575,28 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#body-sections" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#element-file-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Body Sections
+        Element File Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Element File Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-front-matter-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Front Matter Fields
       
     </span>
   </a>
@@ -600,33 +617,27 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Scene File Format">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#front-matter-fields_1" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versioning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Front Matter Fields
+        Versioning
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#body-sections_1" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#story-bible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Body Sections
+        Story Bible
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -646,17 +657,6 @@
     <span class="md-ellipsis">
       
         Character Directory Auto-Detection
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-project-teen_play" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Project: teen_play
       
     </span>
   </a>
@@ -1000,11 +1000,28 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#body-sections" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#element-file-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Body Sections
+        Element File Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Element File Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-front-matter-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Front Matter Fields
       
     </span>
   </a>
@@ -1025,33 +1042,27 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Scene File Format">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#front-matter-fields_1" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#versioning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Front Matter Fields
+        Versioning
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#body-sections_1" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#story-bible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Body Sections
+        Story Bible
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1071,17 +1082,6 @@
     <span class="md-ellipsis">
       
         Character Directory Auto-Detection
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-project-teen_play" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Project: teen_play
       
     </span>
   </a>
@@ -1171,50 +1171,54 @@
 
 <h1 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h1>
 <h2 id="project-layout">Project Layout<a class="headerlink" href="#project-layout" title="Permanent link">&para;</a></h2>
-<p>Each WritersRoom project has this structure:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>my_project/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  config.yml                    # LLM provider and model settings
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  project.md                    # Project metadata, concept, and story arcs
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  characters/                   # Character files (markdown with front matter)
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    alice.md
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    bob.md
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  scenes/                       # Scene files (markdown with front matter)
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    scene_01_opening.md
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    scene_02_conflict.md
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  transcripts/                  # Generated dialog transcripts
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  arcs/                         # Story arc outlines and breakdowns
+<p>Each WritersRoom project has a base structure plus medium-specific directories:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>my_novella/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  config.yml                    # LLM provider and model settings (only YAML file)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  project.md                    # Project metadata: name, concept, medium
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  story_bible.yml               # Auto-generated element index
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  characters/                   # Character files
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    alice_morgan.md
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  chapters/                     # Chapter files (novella medium)
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    the_letter.md
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    the_letter_v1.md            # Versioned snapshot
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  arcs/                         # Story arc outlines
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  settings/
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  locations/
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  relationships/
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  backstory/
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  drafts/
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  transcripts/
 </span></code></pre></div>
-<p>All project files except <code>config.yml</code> are markdown with YAML front matter.</p>
+<p>The exact set of subdirectories depends on the medium type chosen during <code>wr init</code>. See <a href="../getting_started/#available-media-types">Getting Started</a> for the full table.</p>
 <p>Create a new project with:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wr<span class="w"> </span>init<span class="w"> </span>my_project<span class="w"> </span>--concept<span class="w"> </span><span class="s2">&quot;A story about two rival chefs&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wr<span class="w"> </span>init<span class="w"> </span>my_novella<span class="w"> </span>--medium<span class="w"> </span>novella<span class="w"> </span>--concept<span class="w"> </span><span class="s2">&quot;A detective retires, then a letter arrives&quot;</span>
 </span></code></pre></div>
-<p>This creates <code>config.yml</code>, <code>project.md</code>, and the four subdirectories.</p>
 <h2 id="file-format">File Format<a class="headerlink" href="#file-format" title="Permanent link">&para;</a></h2>
-<p>Every file in a WritersRoom project (except <code>config.yml</code>) uses markdown with YAML front matter. Structured data goes in the front matter, prose goes in the body.</p>
+<p>Every file in a WritersRoom project (except <code>config.yml</code> and <code>story_bible.yml</code>) uses markdown with YAML front matter. Structured data goes in the front matter, prose goes in the body.</p>
 <h2 id="character-file-format">Character File Format<a class="headerlink" href="#character-file-format" title="Permanent link">&para;</a></h2>
 <div class="language-markdown highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>---
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>name: Alex
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>age: 17
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sport: Basketball team captain
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>relationships:
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  Tyler: &quot;Soccer captain. Initially rival for gym time.&quot;
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="gu">  Marcus: &quot;Team statistician. Values his insights.&quot;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>name: Alice Morgan
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>element_type: characters
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>status: draft
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>personality: curious
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>speaking_style: formal
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="gu">background: Retired detective</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="gu">---</span>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="gu">## Personality</span>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Basketball team captain. Intensely focused and competitive.
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Direct communicator. Strong work ethic.
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Retired detective with a sharp analytical mind. Intensely curious,
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>with a formal speaking style that softens around close friends.
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="gu">## Voice Pattern</span>
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>Direct and concise. Short, punchy sentences when focused.
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>Uses basketball terms naturally.
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>Precise and measured. Uses law-enforcement terminology naturally.
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>Asks pointed questions even in casual conversation.
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="gu">## Current Arc</span>
 </span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>Learning that relationships aren&#39;t distractions.
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>Discovering vulnerability doesn&#39;t mean weakness.
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>Learning to let go of old cases. Drawn back in by a letter
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>that reopens questions she thought were settled.
 </span></code></pre></div>
 <h3 id="front-matter-fields">Front Matter Fields<a class="headerlink" href="#front-matter-fields" title="Permanent link">&para;</a></h3>
 <table>
@@ -1227,89 +1231,42 @@
 <tbody>
 <tr>
 <td><code>name</code></td>
-<td>Character name (must match the name used in scene files)</td>
+<td>Character name (matches the name used in scene files)</td>
 </tr>
 <tr>
-<td><code>age</code></td>
-<td>Character age</td>
+<td><code>element_type</code></td>
+<td>Always <code>characters</code> for character files</td>
 </tr>
 <tr>
-<td><code>sport</code></td>
-<td>Activity or role</td>
+<td><code>status</code></td>
+<td>Workflow status (draft, revision, final, etc.)</td>
 </tr>
 <tr>
-<td><code>relationships</code></td>
-<td>Other character names mapped to relationship descriptions</td>
+<td><code>personality</code></td>
+<td>Personality traits</td>
+</tr>
+<tr>
+<td><code>speaking_style</code></td>
+<td>How the character speaks</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>Brief backstory</td>
 </tr>
 </tbody>
 </table>
-<h3 id="body-sections">Body Sections<a class="headerlink" href="#body-sections" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Section</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Personality</td>
-<td>Personality traits, tendencies, motivations</td>
-</tr>
-<tr>
-<td>Voice Pattern</td>
-<td>How the character speaks, with examples</td>
-</tr>
-<tr>
-<td>Current Arc</td>
-<td>The character's growth trajectory in the story</td>
-</tr>
-</tbody>
-</table>
-<h2 id="scene-file-format">Scene File Format<a class="headerlink" href="#scene-file-format" title="Permanent link">&para;</a></h2>
+<h2 id="element-file-format">Element File Format<a class="headerlink" href="#element-file-format" title="Permanent link">&para;</a></h2>
+<p>All element types (chapters, arcs, locations, settings, relationships, themes) follow the same pattern:</p>
 <div class="language-markdown highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>---
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>scene_number: 1
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>scene_name: &quot;The Gym Wars&quot;
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>week: 1
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>location: &quot;Riverside High gymnasium&quot;
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>characters:
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Marcus
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Jamie
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Tyler
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Alex
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Benny
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>Zoe
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>tone: Comedic, chaotic, energetic
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>key_moments:
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>&quot;Marcus and Jamie bond over finding the scheduling bug&quot;
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="gu">  - &quot;Tyler and Alex&#39;s hands linger during a collision&quot;</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="gu">---</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="gu">## Context</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>Tyler&#39;s soccer team and Alex&#39;s basketball team both arrive
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>for practice at the same time due to a scheduling error.
-</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>
-</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="gu">## Scene Objectives</span>
-</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>
-</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="gs">**Marcus:**</span> Solve the scheduling conflict using logic and data.
-</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>
-</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="gs">**Jamie:**</span> Find and fix the bug in the scheduling system.
-</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>
-</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="gs">**Tyler:**</span> Get gym time without being a jerk about it.
-</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a>
-</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="gs">**Alex:**</span> Secure gym time for basketball practice.
-</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a>
-</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a><span class="gs">**Benny:**</span> Make everyone laugh. Defuse the tension.
-</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a>
-</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a><span class="gs">**Zoe:**</span> Provide dramatic narration of events.
-</span><span id="__span-3-37"><a id="__codelineno-3-37" name="__codelineno-3-37" href="#__codelineno-3-37"></a>
-</span><span id="__span-3-38"><a id="__codelineno-3-38" name="__codelineno-3-38" href="#__codelineno-3-38"></a><span class="gu">## Beat Structure</span>
-</span><span id="__span-3-39"><a id="__codelineno-3-39" name="__codelineno-3-39" href="#__codelineno-3-39"></a>
-</span><span id="__span-3-40"><a id="__codelineno-3-40" name="__codelineno-3-40" href="#__codelineno-3-40"></a><span class="k">1.</span> <span class="gs">**The Standoff**</span> (2 minutes) -- Both teams arrive. Tension builds.
-</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a><span class="k">2.</span> <span class="gs">**The Negotiators**</span> (3 minutes) -- Marcus mediates. Jamie debugs.
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>name: The Letter
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>element_type: chapters
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="gu">status: draft</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="gu">---</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Alice finds a mysterious letter on her doorstep. The handwriting
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>is familiar but she can&#39;t place it.
 </span></code></pre></div>
-<h3 id="front-matter-fields_1">Front Matter Fields<a class="headerlink" href="#front-matter-fields_1" title="Permanent link">&para;</a></h3>
+<h3 id="common-front-matter-fields">Common Front Matter Fields<a class="headerlink" href="#common-front-matter-fields" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -1319,62 +1276,70 @@
 </thead>
 <tbody>
 <tr>
-<td><code>scene_number</code></td>
-<td>Numeric identifier</td>
+<td><code>name</code></td>
+<td>Display name for the element</td>
 </tr>
 <tr>
-<td><code>scene_name</code></td>
-<td>Display name for the scene</td>
+<td><code>element_type</code></td>
+<td>The element's type (chapters, arcs, locations, etc.)</td>
 </tr>
 <tr>
-<td><code>week</code></td>
-<td>Timeline position (for multi-week stories)</td>
+<td><code>status</code></td>
+<td>Workflow status</td>
 </tr>
 <tr>
-<td><code>location</code></td>
-<td>Where the scene takes place</td>
+<td><code>aliases</code></td>
+<td>Alternative names for story bible lookups</td>
 </tr>
 <tr>
-<td><code>characters</code></td>
-<td>List of character names (must match character filenames)</td>
+<td><code>version</code></td>
+<td>Version number (on versioned snapshots)</td>
 </tr>
 <tr>
-<td><code>tone</code></td>
-<td>Emotional quality of the scene</td>
-</tr>
-<tr>
-<td><code>key_moments</code></td>
-<td>Important events that should occur</td>
+<td><code>based_on</code></td>
+<td>Source file for a version snapshot</td>
 </tr>
 </tbody>
 </table>
-<h3 id="body-sections_1">Body Sections<a class="headerlink" href="#body-sections_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Section</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Context</td>
-<td>Narrative setup and situation</td>
-</tr>
-<tr>
-<td>Scene Objectives</td>
-<td>Per-character goals for the scene</td>
-</tr>
-<tr>
-<td>Beat Structure</td>
-<td>Sequence of dramatic beats with timing</td>
-</tr>
-</tbody>
-</table>
+<h2 id="scene-file-format">Scene File Format<a class="headerlink" href="#scene-file-format" title="Permanent link">&para;</a></h2>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>---
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>name: Opening
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>description: A quiet morning
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>characters:
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>alice_morgan
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>element_type: scenes
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="gu">status: draft</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="gu">---</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="gu">## Context</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>A quiet autumn morning. Alice sits on her porch with coffee,
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>watching leaves drift across the yard.
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="gu">## Scene Objectives</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="gs">**Alice:**</span> Establish her retired life and hint at restlessness.
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="gu">## Beat Structure</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="k">1.</span> <span class="gs">**Morning routine**</span> -- Alice reads the paper, checks the mail.
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="k">2.</span> <span class="gs">**The letter**</span> -- She finds an unmarked envelope.
+</span></code></pre></div>
+<h2 id="versioning">Versioning<a class="headerlink" href="#versioning" title="Permanent link">&para;</a></h2>
+<p>Any element can be versioned. Versions are stored as <code>slug_v1.md</code>, <code>slug_v2.md</code>, etc. in the same directory:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>wr<span class="w"> </span>chapter<span class="w"> </span>version<span class="w"> </span>the_letter<span class="w">    </span><span class="c1"># creates the_letter_v1.md</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>wr<span class="w"> </span>chapter<span class="w"> </span>version<span class="w"> </span>the_letter<span class="w">    </span><span class="c1"># creates the_letter_v2.md</span>
+</span></code></pre></div>
+<p>Version files are excluded from element listings and counts. They serve as snapshots you can refer back to.</p>
+<h2 id="story-bible">Story Bible<a class="headerlink" href="#story-bible" title="Permanent link">&para;</a></h2>
+<p>The <code>story_bible.yml</code> file is an auto-generated index mapping element slugs and aliases to their files. It is rebuilt from project files:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>wr<span class="w"> </span>bible<span class="w"> </span>regenerate<span class="w">     </span><span class="c1"># rebuild from all project files</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>wr<span class="w"> </span>bible<span class="w"> </span>show<span class="w">           </span><span class="c1"># display indexed elements</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>wr<span class="w"> </span>bible<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;Alice&quot;</span><span class="w"> </span><span class="c1"># find by name, slug, or substring</span>
+</span></code></pre></div>
+<p>The story bible supports exact matching on slug, name, and aliases, with a substring fallback for partial matches.</p>
 <h2 id="prompt-templates">Prompt Templates<a class="headerlink" href="#prompt-templates" title="Permanent link">&para;</a></h2>
-<p>WritersRoom uses <a href="https://github.com/madbomber/prompt_manager">prompt_manager</a>
-for its LLM prompts. Templates are markdown files with YAML front matter and
-ERB interpolation.</p>
+<p>WritersRoom uses <a href="https://github.com/madbomber/robot_lab">RobotLab</a> templates for its LLM prompts. Templates are markdown files with YAML front matter and ERB interpolation.</p>
 <p>Default templates ship with the gem in <code>lib/writers_room/prompts/</code>:</p>
 <table>
 <thead>
@@ -1410,31 +1375,30 @@ ERB interpolation.</p>
 </tr>
 </tbody>
 </table>
-<p>To customize prompts for a project, create a <code>prompts/</code> directory in your
-project and add your own versions. Project-level prompts override the gem
-defaults.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>my_project/
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  prompts/                        # Optional per-project prompt overrides
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    actor_system.md               # Custom character instructions
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    develop_concept.md            # Custom concept development style
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  config.yml
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  project.md
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  characters/
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  scenes/
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  ...
+<p>To customize prompts for a project, create a <code>prompts/</code> directory in your project and add your own versions. Project-level prompts override the gem defaults.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>my_novella/
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  prompts/                        # Optional per-project prompt overrides
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    actor_system.md               # Custom character instructions
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    develop_concept.md            # Custom concept development style
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  config.yml
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  project.md
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  story_bible.yml
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  characters/
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  chapters/
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  ...
 </span></code></pre></div>
 <p>Templates use ERB for variable interpolation:</p>
-<div class="language-markdown highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>---
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>description: System prompt for character actors
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>parameters:
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  character_name: null
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="gu">  personality: null</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="gu">---</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>You are &lt;%= character_name %&gt;.
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="gu">## Personality</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>&lt;%= personality %&gt;
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>---
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>description: System prompt for character actors
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>parameters:
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  character_name: null
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="gu">  personality: null</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="gu">---</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>You are &lt;%= character_name %&gt;.
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="gu">## Personality</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>&lt;%= personality %&gt;
 </span></code></pre></div>
 <p>See the default templates in the gem for the full set of available variables.</p>
 <h2 id="character-directory-auto-detection">Character Directory Auto-Detection<a class="headerlink" href="#character-directory-auto-detection" title="Permanent link">&para;</a></h2>
@@ -1445,29 +1409,8 @@ defaults.</p>
 <li>Fall back to <code>characters/</code> in the current directory</li>
 </ol>
 <p>This means you can run scenes from inside a project directory without specifying the character path:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>my_project
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>wr<span class="w"> </span>direct<span class="w"> </span>scenes/scene_01_opening.md
-</span></code></pre></div>
-<h2 id="example-project-teen_play">Example Project: teen_play<a class="headerlink" href="#example-project-teen_play" title="Permanent link">&para;</a></h2>
-<p>The included <code>projects/teen_play/</code> demonstrates a complete project:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>projects/teen_play/
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  config.yml                          # provider: ollama, model_name: gpt-oss
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  project.md                          # &quot;Love by the Numbers&quot; metadata
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  characters/
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    marcus.md                         # The analytical math whiz
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    jamie.md                          # The logical robotics president
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    tyler.md                          # The sensitive soccer captain
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    alex.md                           # The intense basketball captain
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    benny.md                          # The insecure class clown
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    zoe.md                            # The theatrical drama kid
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  scenes/
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    scene_01_gym_wars.md              # All 6 characters meet (Week 1)
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    scene_02_statistical_anomaly.md   # Marcus, Jamie, Benny (Week 2)
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    scene_04_equipment_room.md        # Benny &amp; Zoe breakthrough (Week 6)
-</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    scene_08_data_dump.md             # Finale, all 6 characters (Week 16)
-</span></code></pre></div>
-<p>Run a teen_play scene:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>wr<span class="w"> </span>direct<span class="w"> </span>projects/teen_play/scenes/scene_01_gym_wars.md<span class="w"> </span>--max-lines<span class="w"> </span><span class="m">30</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>my_novella
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>wr<span class="w"> </span>direct<span class="w"> </span>scenes/opening.md
 </span></code></pre></div>
 
 

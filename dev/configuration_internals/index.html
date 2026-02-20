@@ -812,6 +812,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#template-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -956,6 +967,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#template-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1060,6 +1082,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="w">  </span><span class="c1"># =&gt; &quot;gpt-oss:20b&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ollama_url</span><span class="w">  </span><span class="c1"># =&gt; &quot;http://localhost:11434&quot;</span>
 </span></code></pre></div>
+<p>The config is a singleton cached on <code>WritersRoom</code>. Use <code>WritersRoom.reset_config!</code> to clear the cache.</p>
 <h2 id="llmsetup-module">LLMSetup Module<a class="headerlink" href="#llmsetup-module" title="Permanent link">&para;</a></h2>
 <p><code>WritersRoom::LLMSetup</code> centralizes LLM provider configuration. It eliminates duplication that previously existed between Writer and ChatSession.</p>
 <h3 id="configure_ruby_llm">configure_ruby_llm<a class="headerlink" href="#configure_ruby_llm" title="Permanent link">&para;</a></h3>
@@ -1111,9 +1134,17 @@
 </tbody>
 </table>
 <p>Provider-specific API keys (<code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>) are read directly by RubyLLM.</p>
+<h2 id="template-path">Template Path<a class="headerlink" href="#template-path" title="Permanent link">&para;</a></h2>
+<p>The <code>ROBOT_LAB_TEMPLATE_PATH</code> environment variable is set automatically in <code>lib/writers_room.rb</code> to point at the gem's <code>prompts/</code> directory. This allows RobotLab's prompt_manager to find WritersRoom's templates.</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ROBOT_LAB_TEMPLATE_PATH&quot;</span><span class="o">]</span><span class="w"> </span><span class="o">||=</span><span class="w"> </span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;writers_room/prompts&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">__dir__</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Project-level <code>prompts/</code> directories override gem defaults by placing files with the same names.</p>
 <h2 id="reset">Reset<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h2>
 <p>For testing, reset the cached config:</p>
-<div class="language-ruby highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">reset_config!</span>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="no">WritersRoom</span><span class="o">.</span><span class="n">reset_config!</span>
+</span></code></pre></div>
+<p>For the medium registry:</p>
+<div class="language-ruby highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="no">WritersRoom</span><span class="o">::</span><span class="no">MediumRegistry</span><span class="o">.</span><span class="n">reset!</span>
 </span></code></pre></div>
 
 
