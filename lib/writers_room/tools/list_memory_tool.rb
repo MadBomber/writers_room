@@ -2,10 +2,12 @@
 
 module WritersRoom
   class ListMemoryTool < RobotLab::Tool
+    def name = "list_memory"
+
     description "List all keys currently in shared scene memory. " \
                 "Use to see what information is available."
 
-    def execute
+    def execute(**)
       memory = robot.shared_memory
       return "No shared memory available." unless memory
 

@@ -34,3 +34,20 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Dramaturg
+    description: Analyzes dramatic structure, act breaks, thematic depth, and theatrical conventions
+    domains:
+      - acts
+      - scenes
+      - arcs
+      - conflict
+      - theme
+  - id: character
+    label: Character Voice
+    description: Develops stage-ready character voices, subtext, and dialog that works when performed
+    domains:
+      - characters
+      - arcs
+      - settings

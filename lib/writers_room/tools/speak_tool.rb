@@ -4,6 +4,8 @@ module WritersRoom
   class SpeakTool < RobotLab::Tool
     DIALOG_MUTEX = Mutex.new
 
+    def name = "speak"
+
     description "Speak dialog to the scene. All other characters will hear you. " \
                 "Use this to say your line in character."
 
@@ -12,7 +14,7 @@ module WritersRoom
     param :emotion, type: "string",
           desc: "Emotional tone (e.g. excited, nervous, sarcastic)", required: false
 
-    def execute(dialog:, emotion: nil)
+    def execute(dialog:, emotion: nil, **)
       robot.send_message(
         to: :scene,
         content: dialog

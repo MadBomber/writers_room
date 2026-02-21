@@ -45,3 +45,26 @@ statuses:
   - revision
   - polish
   - final
+chat_specialists:
+  - id: story
+    label: Structure Analyst
+    description: Designs three-act structure, scene sequences, pacing beats, and plot turning points
+    domains:
+      - acts
+      - sequences
+      - scenes
+      - arcs
+      - conflict
+      - timeline
+  - id: character
+    label: Character Voice
+    description: Develops distinct character voices, subtext in dialog, and character-driven conflict
+    domains:
+      - characters
+      - arcs
+  - id: world
+    label: Visual Storyteller
+    description: Crafts visual storytelling, scene descriptions, locations, and cinematic language
+    domains:
+      - settings
+      - locations

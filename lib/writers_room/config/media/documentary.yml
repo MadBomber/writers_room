@@ -34,3 +34,19 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: research
+    label: Research Analyst
+    description: Organizes research, verifies sources, structures evidence, and maintains factual accuracy
+    domains:
+      - research
+      - sources
+      - timeline
+      - interviews
+  - id: story
+    label: Narrative Producer
+    description: Shapes the documentary narrative arc, segment structure, and editorial voice
+    domains:
+      - segments
+      - story
+      - theme

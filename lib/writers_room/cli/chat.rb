@@ -48,6 +48,14 @@ module WritersRoom
           template = :context_chat_root
         end
 
+        if medium.has_chat_specialists? && !context.element_type
+          start_multi_robot_chat(medium, chat_context, context)
+        else
+          start_single_robot_chat(chat_context, template, context)
+        end
+      end
+
+      def start_single_robot_chat(chat_context, template, context)
         session = WritersRoom::ChatSession.new(
           context: chat_context,
           template: template,
@@ -55,6 +63,29 @@ module WritersRoom
         )
         WritersRoom::ChatTui.new(session).run
 
+        save_chat_log(context.project_path, session)
+      end
+
+      def start_multi_robot_chat(medium, chat_context, context)
+        run_config = WritersRoom::LLMSetup.build_run_config
+
+        chat_room = WritersRoom::ChatRoom.new(
+          medium:          medium,
+          project_context: chat_context,
+          project_path:    context.project_path,
+          config:          run_config
+        )
+
+        # ChatSession still handles commands (help, save, summary, etc.)
+        session = WritersRoom::ChatSession.new(
+          context: chat_context,
+          template: :context_chat_root,
+          project_path: context.project_path
+        )
+
+        WritersRoom::ChatTui.new(session, chat_room: chat_room).run
+
+        chat_room.shutdown
         save_chat_log(context.project_path, session)
       end
 

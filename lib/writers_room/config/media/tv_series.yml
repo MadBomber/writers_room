@@ -44,3 +44,27 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Series Architect
+    description: Designs season arcs, episode structure, series bible, and long-term story planning
+    domains:
+      - seasons
+      - episodes
+      - arcs
+      - timeline
+  - id: character
+    label: Character Voice
+    description: Develops ensemble dynamics, character voices, recurring relationships, and character growth across seasons
+    domains:
+      - characters
+      - arcs
+  - id: episode
+    label: Episode Structure
+    description: Crafts individual episode pacing, cold opens, act breaks, scene beats, and cliffhangers
+    domains:
+      - scenes
+      - episodes
+      - conflict
+      - settings
+      - locations

@@ -35,3 +35,20 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Audio Dramatist
+    description: Structures episodes, scenes, and pacing for audio-only storytelling including sound design cues
+    domains:
+      - episodes
+      - scenes
+      - arcs
+      - conflict
+      - settings
+      - sound_design
+  - id: character
+    label: Character Voice
+    description: Develops distinctive vocal character identities and dialog that carries story without visual support
+    domains:
+      - characters
+      - arcs

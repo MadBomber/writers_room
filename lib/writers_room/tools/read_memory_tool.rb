@@ -4,13 +4,15 @@ require "json"
 
 module WritersRoom
   class ReadMemoryTool < RobotLab::Tool
+    def name = "read_memory"
+
     description "Read a value from shared scene memory. " \
                 "Use to check dialog history, scene state, or notes from other characters."
 
     param :key, type: "string",
           desc: "Memory key to read (e.g. dialog_history, scene_state, notes)", required: true
 
-    def execute(key:)
+    def execute(key:, **)
       memory = robot.shared_memory
       return "No shared memory available." unless memory
 

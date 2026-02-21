@@ -10,6 +10,7 @@ PATH
     writers_room (0.0.4)
       debug_me (>= 1.0)
       myway_config (~> 0.1)
+      reline
       robot_lab (>= 0.0.7)
       thor (~> 1.3)
       zeitwerk (~> 2.6)
@@ -91,6 +92,7 @@ GEM
       http-2 (>= 1.0.0)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
+    io-console (0.8.2)
     io-endpoint (0.17.2)
     io-event (1.14.2)
     io-stream (0.11.1)
@@ -137,6 +139,8 @@ GEM
       rexml (~> 3.4)
     rb_sys (0.9.124)
       rake-compiler-dock (= 1.11.0)
+    reline (0.6.3)
+      io-console (~> 0.5)
     rexml (3.4.4)
     robot_lab (0.0.7)
       activesupport (>= 7.0)
@@ -222,6 +226,7 @@ CHECKSUMS
   http-2 (1.1.2) sha256=8c1cb40203fc60b521c491509fee96c7b08092975eb30036465992433715ed40
   httpx (1.7.2) sha256=10cdcd5b03794de743bec87e8cdba2ca93e2124084b6cdb1ad01b00c192a51f7
   i18n (1.14.8) sha256=285778639134865c5e0f6269e0b818256017e8cde89993fdfcbfb64d088824a5
+  io-console (0.8.2) sha256=d6e3ae7a7cc7574f4b8893b4fca2162e57a825b223a177b7afa236c5ef9814cc
   io-endpoint (0.17.2) sha256=3feaf766c116b35839c11fac68b6aaadc47887bb488902a57bf8e1d288fb3338
   io-event (1.14.2) sha256=b0a069190eafe86005c22f7464f744971b5bd82f153740d34e6ab49548d4f613
   io-stream (0.11.1) sha256=fa5f551fcff99581c1757b9d1cee2c37b124f07d2ca4f40b756a05ab9bd21b87
@@ -251,6 +256,7 @@ CHECKSUMS
   ratatui_ruby (1.4.1) sha256=0aa778488870bcd17d2ff0fe6c8c1fa485427802fa595e70fff16817db43595a
   ratatui_ruby (1.4.1-arm64-darwin-24) sha256=184f4eddda783789b2e77a13acf43e862fb714b7e70e4e1929eb166e62dc876e
   rb_sys (0.9.124) sha256=513476557b12eaf73764b3da9f8746024558fe8699bda785fb548c9aa3877ae7
+  reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
   robot_lab (0.0.7) sha256=425b1030fbb6b9e6c39bb47061895fd2942267952d83bd9f20e947029a55e4c4
   ruby-next-core (1.2.0) sha256=f6a7d00bb5186cecbb02f7f1845a0f3a2c9788d35b6ccff5c9be3f0d46799b86

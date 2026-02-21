@@ -38,3 +38,26 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Narrative Focus
+    description: Structures tight narrative arcs, chapter pacing, POV consistency, and thematic unity for compressed storytelling
+    domains:
+      - arcs
+      - chapters
+      - conflict
+      - point_of_view
+      - theme
+  - id: character
+    label: Character Voice
+    description: Develops character depth, relationships, and backstory within the novella's focused scope
+    domains:
+      - characters
+      - relationships
+      - backstory
+  - id: world
+    label: World Builder
+    description: Crafts settings, locations, and environmental details that ground the novella's focused world
+    domains:
+      - settings
+      - locations

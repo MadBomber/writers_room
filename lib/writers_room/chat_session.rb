@@ -453,7 +453,8 @@ module WritersRoom
       [
         ReadFileTool.new(project_path: @project_path),
         WriteFileTool.new(project_path: @project_path),
-        ListDirectoryTool.new(project_path: @project_path)
+        ListDirectoryTool.new(project_path: @project_path),
+        OpenEditorTool.new(project_path: @project_path)
       ]
     end
 

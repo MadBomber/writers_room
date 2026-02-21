@@ -30,3 +30,16 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Narrative Focus
+    description: Covers all aspects of short fiction — structure, character, voice, setting, and thematic resonance in a single focused perspective
+    domains:
+      - story
+      - characters
+      - conflict
+      - settings
+      - scenes
+      - point_of_view
+      - theme
+      - tone_mood

@@ -4,6 +4,8 @@ module WritersRoom
   class WriteMemoryTool < RobotLab::Tool
     RESERVED_KEYS = %i[scene_complete dialog_history line_count].freeze
 
+    def name = "write_memory"
+
     description "Write a value to shared scene memory for all characters to see. " \
                 "Use to store observations, notes, or scene state."
 
@@ -12,7 +14,7 @@ module WritersRoom
     param :value, type: "string",
           desc: "Content to store", required: true
 
-    def execute(key:, value:)
+    def execute(key:, value:, **)
       memory = robot.shared_memory
       return "No shared memory available." unless memory
 

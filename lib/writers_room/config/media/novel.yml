@@ -54,3 +54,29 @@ statuses:
   - draft
   - revision
   - final
+chat_specialists:
+  - id: story
+    label: Story Architect
+    description: Structures narrative arcs, chapter pacing, plot progression, and timeline consistency
+    domains:
+      - arcs
+      - chapters
+      - parts
+      - timeline
+      - conflict
+      - point_of_view
+  - id: character
+    label: Character Voice
+    description: Develops authentic character voices, relationships, backstories, and emotional arcs
+    domains:
+      - characters
+      - relationships
+      - backstory
+  - id: world
+    label: World Builder
+    description: Crafts settings, locations, world rules, and research details for immersive environments
+    domains:
+      - settings
+      - locations
+      - research
+      - story_bible
